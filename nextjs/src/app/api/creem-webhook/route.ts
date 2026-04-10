@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { checkoutSessions } from "@/lib/schema";
@@ -27,7 +28,9 @@ export async function POST(request: Request) {
   }
 
   const computed = await hmacSignRaw(rawBody, secret);
-  if (computed !== signature) {
+  const computedBuf = Buffer.from(computed);
+  const signatureBuf = Buffer.from(signature);
+  if (computedBuf.length !== signatureBuf.length || !crypto.timingSafeEqual(computedBuf, signatureBuf)) {
     return Response.json(
       { error: { code: "invalid_signature", message: "Invalid webhook signature" } },
       { status: 401 }
