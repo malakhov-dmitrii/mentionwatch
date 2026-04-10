@@ -75,7 +75,7 @@ export default function RootLayout({
         />
         <script
           defer
-          data-domain="mentionwatch.com"
+          data-domain="mentionwatch.mlh.one"
           src="https://plausible.io/js/script.js"
         />
       </head>
