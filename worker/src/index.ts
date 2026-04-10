@@ -8,8 +8,8 @@ import { searchHN, hnHitToMention } from './hn';
 
 type Bindings = {
   KV: KVNamespace;
-  STRIPE_SECRET_KEY: string;
-  STRIPE_WEBHOOK_SECRET: string;
+  CREEM_API_KEY: string;
+  CREEM_WEBHOOK_SECRET: string;
   LANDING_URL: string;
 };
 
@@ -63,10 +63,10 @@ app.use('/api/*', async (c, next) => {
   return next();
 });
 
-// Auth middleware (skip for stripe webhook and welcome)
+// Auth middleware (skip for creem webhook and welcome)
 async function authMiddleware(c: any, next: () => Promise<void>) {
   const path = c.req.path;
-  if (path === '/api/stripe-webhook' || path === '/api/welcome' || path === '/') {
+  if (path === '/api/creem-webhook' || path === '/api/welcome' || path === '/') {
     return next();
   }
 
@@ -304,35 +304,45 @@ app.get('/api/mentions', async (c) => {
   });
 });
 
-// ─── Stripe Webhook ───
+// ─── Creem Webhook ───
 
-app.post('/api/stripe-webhook', async (c) => {
+app.post('/api/creem-webhook', async (c) => {
   const body = await c.req.text();
-  const sig = c.req.header('stripe-signature');
+  const sig = c.req.header('creem-signature');
 
   if (!sig) {
-    return errorResponse('auth_required', 'Missing stripe-signature header', 400);
+    return errorResponse('auth_required', 'Missing creem-signature header', 400);
   }
 
-  // Verify Stripe signature (simplified — in production use stripe SDK)
-  // For now, we trust the signature header format and verify via Stripe SDK
-  let event: any;
-  try {
-    // Simple signature verification using Stripe's webhook signing
-    event = await verifyStripeWebhook(body, sig, c.env.STRIPE_WEBHOOK_SECRET);
-  } catch (err) {
-    console.error('Stripe webhook verification failed:', err);
-    return errorResponse('auth_required', 'Invalid stripe signature', 400);
+  // Verify Creem HMAC-SHA256 signature
+  const isValid = await verifyCreemSignature(body, sig, c.env.CREEM_WEBHOOK_SECRET);
+  if (!isValid) {
+    console.error('Creem webhook signature verification failed');
+    return errorResponse('auth_required', 'Invalid creem signature', 400);
   }
 
-  if (event.type === 'checkout.session.completed') {
-    const session = event.data.object;
-    const email = session.customer_details?.email || session.customer_email || '';
-    const plan = session.metadata?.plan || 'starter';
+  const event = JSON.parse(body);
+
+  if (event.eventType === 'checkout.completed') {
+    const order = event.object;
+    const checkoutId = order.checkout_id || order.id;
+
+    // Idempotency: skip if already provisioned for this checkout
+    const existing = await c.env.KV.get(`checkout:${checkoutId}`);
+    if (existing) {
+      console.log(`Duplicate webhook for checkout ${checkoutId}, skipping`);
+      return c.json({ received: true });
+    }
+
+    const email = order.customer?.email || '';
+    const productId = order.product?.id || '';
+
+    // Determine plan from product metadata or ID
+    const plan = productId.includes('pro') ? 'pro' : 'starter';
 
     // Generate API key and webhook secret
-    const apiKey = `mw_live_${generateId('')}`.replace('_', '_');
-    const webhookSecret = `mw_whsec_${generateId('')}`.replace('_', '_');
+    const apiKey = `mw_live_${generateId('')}`;
+    const webhookSecret = `mw_whsec_${generateId('')}`;
     const customerId = generateId('cust');
     const keyHash = await hashApiKey(apiKey);
 
@@ -352,13 +362,14 @@ app.post('/api/stripe-webhook', async (c) => {
     await c.env.KV.put(`customer:${customerId}`, JSON.stringify(customerData));
     // Map API key hash to customer ID
     await c.env.KV.put(`key:${keyHash}`, customerId);
-    // Store session-to-customer mapping for welcome page
-    await c.env.KV.put(`session:${session.id}`, JSON.stringify({
-      api_key: apiKey, // Only stored temporarily for welcome page
+    // Store checkout-to-customer mapping for welcome page (keyed by checkout_id)
+    // TTL handles cleanup — do NOT delete on read (prevents refresh/prefetch from burning creds)
+    await c.env.KV.put(`checkout:${checkoutId}`, JSON.stringify({
+      api_key: apiKey,
       webhook_secret: webhookSecret,
       plan,
       customer_id: customerId,
-    }), { expirationTtl: 3600 }); // 1 hour expiry
+    }), { expirationTtl: 86400 }); // 24 hour expiry (not deleted on read)
 
     console.log(`New customer: ${customerId} (${email}, ${plan})`);
   }
@@ -366,25 +377,30 @@ app.post('/api/stripe-webhook', async (c) => {
   return c.json({ received: true });
 });
 
-// Welcome page data (called by landing page JS)
+// Welcome page data (called by landing page JS after Creem redirect)
+// Creem redirects to: success_url?checkout_id=xxx&order_id=xxx&customer_id=xxx
 app.get('/api/welcome', async (c) => {
-  const sessionId = c.req.query('session_id');
-  if (!sessionId) {
-    return errorResponse('auth_required', 'session_id is required', 400);
+  const checkoutId = c.req.query('checkout_id');
+  if (!checkoutId) {
+    return errorResponse('auth_required', 'checkout_id is required', 400);
   }
 
-  const sessionData = await c.env.KV.get(`session:${sessionId}`, 'json') as any;
+  const sessionData = await c.env.KV.get(`checkout:${checkoutId}`, 'json') as any;
   if (!sessionData) {
-    return errorResponse('invalid_api_key', 'Session not found or expired. Check your email.', 404);
+    return errorResponse('invalid_api_key', 'Checkout not found or expired. Check your email.', 404);
   }
 
-  // Delete after reading (one-time use)
-  await c.env.KV.delete(`session:${sessionId}`);
-
-  return c.json({
+  // Don't delete — TTL handles cleanup. Allows page refresh without losing credentials.
+  return new Response(JSON.stringify({
     api_key: sessionData.api_key,
     webhook_secret: sessionData.webhook_secret,
     plan: sessionData.plan === 'pro' ? 'Pro ($49/mo)' : 'Starter ($19/mo)',
+  }), {
+    headers: {
+      'Content-Type': 'application/json',
+      'Referrer-Policy': 'no-referrer',
+      'Cache-Control': 'no-store',
+    },
   });
 });
 
@@ -497,29 +513,9 @@ async function pollSources(env: Bindings) {
   console.log(`Poll complete. Checked ${customerKeywords.size} keywords for ${customerKeys.keys.length} customers.`);
 }
 
-// ─── Stripe Webhook Verification ───
+// ─── Creem Webhook Verification ───
 
-async function verifyStripeWebhook(payload: string, sigHeader: string, secret: string): Promise<any> {
-  // Parse Stripe signature header: t=timestamp,v1=signature
-  const parts = sigHeader.split(',').reduce((acc, part) => {
-    const [key, val] = part.split('=');
-    if (key === 't') acc.timestamp = val;
-    if (key === 'v1') acc.signature = val;
-    return acc;
-  }, {} as { timestamp?: string; signature?: string });
-
-  if (!parts.timestamp || !parts.signature) {
-    throw new Error('Invalid Stripe signature format');
-  }
-
-  // Check timestamp (reject if older than 5 minutes)
-  const ts = parseInt(parts.timestamp);
-  if (Math.abs(Date.now() / 1000 - ts) > 300) {
-    throw new Error('Stripe webhook timestamp too old');
-  }
-
-  // Compute expected signature
-  const signedPayload = `${parts.timestamp}.${payload}`;
+async function verifyCreemSignature(payload: string, signature: string, secret: string): Promise<boolean> {
   const encoder = new TextEncoder();
   const key = await crypto.subtle.importKey(
     'raw',
@@ -528,16 +524,11 @@ async function verifyStripeWebhook(payload: string, sigHeader: string, secret: s
     false,
     ['sign']
   );
-  const sig = await crypto.subtle.sign('HMAC', key, encoder.encode(signedPayload));
-  const expectedSig = Array.from(new Uint8Array(sig))
+  const sig = await crypto.subtle.sign('HMAC', key, encoder.encode(payload));
+  const computed = Array.from(new Uint8Array(sig))
     .map(b => b.toString(16).padStart(2, '0'))
     .join('');
-
-  if (expectedSig !== parts.signature) {
-    throw new Error('Stripe signature mismatch');
-  }
-
-  return JSON.parse(payload);
+  return computed === signature;
 }
 
 // ─── Export ───

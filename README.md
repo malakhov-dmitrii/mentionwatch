@@ -5,31 +5,33 @@ Social media keyword monitoring API for developers. Get webhooks when your produ
 ## Project Structure
 
 ```
-landing/          Static HTML landing page (deploy to Vercel/Netlify/any CDN)
+landing/          Static HTML landing page (deploy to Coolify/any CDN)
   index.html      Main landing page
   welcome.html    Post-checkout success page
   docs.html       API documentation
+  agent-setup.html  AI agent onboarding guide
+  compare.html    Competitive comparison
+  llms.txt        Machine-readable product description
 worker/           Cloudflare Worker API backend
   src/index.ts    Main router, API endpoints, cron polling
   src/hn.ts       HN Algolia search service
   src/utils.ts    Auth, crypto, SSRF protection
+mcp/              MCP server for AI agents (WIP)
 ```
 
 ## Setup
 
-### 1. Stripe
+### 1. Creem.io (Payments)
 
-Create two products in Stripe Dashboard:
+Create two products in [Creem Dashboard](https://creem.io/dashboard):
 
-- **Starter** ($19/mo): Add metadata `plan: starter`
-- **Pro** ($49/mo): Add metadata `plan: pro`
+- **Starter** ($19/mo): include `starter` in the product ID
+- **Pro** ($49/mo): include `pro` in the product ID
 
-Create Checkout Sessions (not Payment Links) with:
-- `success_url`: `https://mentionwatch.com/welcome.html?session_id={CHECKOUT_SESSION_ID}`
-- `cancel_url`: `https://mentionwatch.com`
-- `metadata.plan`: `starter` or `pro`
+Create checkout links with:
+- `success_url`: `https://mentionwatch.mlh.one/welcome.html?checkout_id={CHECKOUT_ID}`
 
-Update `STRIPE_CHECKOUT_STARTER_URL` and `STRIPE_CHECKOUT_PRO_URL` in `landing/index.html`.
+Update `CREEM_CHECKOUT_STARTER_URL` and `CREEM_CHECKOUT_PRO_URL` in `landing/index.html`.
 
 ### 2. Cloudflare Worker
 
@@ -41,8 +43,8 @@ bunx wrangler kv namespace create MENTIONWATCH
 # Copy the ID into wrangler.toml
 
 # Set secrets
-bunx wrangler secret put STRIPE_SECRET_KEY
-bunx wrangler secret put STRIPE_WEBHOOK_SECRET
+bunx wrangler secret put CREEM_API_KEY
+bunx wrangler secret put CREEM_WEBHOOK_SECRET
 
 # Deploy
 bun run deploy
@@ -50,29 +52,19 @@ bun run deploy
 
 ### 3. Landing Page
 
-```bash
-cd landing
-# Deploy to any static host. Examples:
+Already deployed to Coolify (`mentionwatch-landing` on `ovh-cloud`).
+Redeploy: `coolify deploy name mentionwatch-landing`
 
-# Vercel
-vercel deploy --prod
+### 4. Creem Webhook
 
-# Netlify
-netlify deploy --prod --dir=.
-
-# Or just upload the 3 HTML files to any CDN
-```
-
-### 4. Stripe Webhook
-
-In Stripe Dashboard, add a webhook endpoint:
-- URL: `https://your-worker.your-subdomain.workers.dev/api/stripe-webhook`
-- Events: `checkout.session.completed`
+In [Creem Dashboard > Developers > Webhooks](https://creem.io/dashboard/developers):
+- URL: `https://api.mentionwatch.mlh.one/api/creem-webhook`
+- Events: `checkout.completed`
 
 ### 5. DNS
 
-Point `mentionwatch.com` to your Vercel/Netlify deployment.
-Point `api.mentionwatch.com` to your Cloudflare Worker (custom domain in Cloudflare Dashboard).
+- `mentionwatch.mlh.one` → Coolify server (A record to 51.75.161.176)
+- `api.mentionwatch.mlh.one` → Cloudflare Worker (custom domain)
 
 ## API Endpoints
 
@@ -85,7 +77,7 @@ POST /api/webhooks        Set webhook URL
 GET  /api/webhooks        Get webhook config
 POST /api/webhooks/test   Send test payload
 GET  /api/mentions        List recent mentions
-POST /api/stripe-webhook  Stripe checkout handler
+POST /api/creem-webhook   Creem checkout handler
 GET  /api/welcome         Post-checkout data
 ```
 

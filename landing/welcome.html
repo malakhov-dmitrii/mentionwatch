@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Welcome to MentionWatch</title>
   <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📡</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -631,7 +632,7 @@
               <em><span class="state-loading" style="font-style:normal">loading...</span></em>
             </span>
           </div>
-          <a href="https://billing.stripe.com/p/login/mentionwatch" class="billing-link" target="_blank" rel="noopener">
+          <a href="https://creem.io/dashboard" class="billing-link" target="_blank" rel="noopener">
             Manage billing &rarr;
           </a>
         </div>
@@ -658,7 +659,7 @@
     const API_BASE = 'https://api.mentionwatch.com';
 
     function getSessionId() {
-      return new URLSearchParams(window.location.search).get('session_id');
+      return new URLSearchParams(window.location.search).get('checkout_id');
     }
 
     function showError(msg) {
@@ -699,7 +700,7 @@
       }
 
       try {
-        const res = await fetch(`${API_BASE}/api/welcome?session_id=${encodeURIComponent(sessionId)}`);
+        const res = await fetch(`${API_BASE}/api/welcome?checkout_id=${encodeURIComponent(sessionId)}`);
 
         if (!res.ok) {
           const body = await res.json().catch(() => ({}));

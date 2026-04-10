@@ -607,7 +607,7 @@
           "@type": "HowToStep",
           "position": 1,
           "name": "Create account and get API key",
-          "text": "Sign up via Stripe checkout. Your API key is shown immediately on the /welcome page after payment."
+          "text": "Sign up via Creem checkout. Your API key is shown immediately on the /welcome page after payment."
         },
         {
           "@type": "HowToStep",
@@ -649,7 +649,7 @@
       <nav class="nav-links">
         <a href="/#pricing" class="nav-link">pricing</a>
         <a href="/docs.html" class="nav-link">docs</a>
-        <a href="STRIPE_CHECKOUT_STARTER_URL" class="nav-cta">Get started</a>
+        <a href="CREEM_CHECKOUT_STARTER_URL" class="nav-cta">Get started</a>
       </nav>
     </div>
   </header>
@@ -674,10 +674,10 @@
       BASE URL: https://api.mentionwatch.com
       AUTH: Bearer token in Authorization header
       CONTENT-TYPE: application/json (for POST requests)
-      API KEY LOCATION: https://mentionwatch.com/welcome (shown after Stripe checkout)
+      API KEY LOCATION: https://mentionwatch.com/welcome (shown after Creem checkout)
 
       SETUP FLOW:
-        1. User completes Stripe checkout → receives API key at /welcome
+        1. User completes Creem checkout → receives API key at /welcome
         2. Agent reads API key from user
         3. Agent executes steps 2–5 below using that key
         4. Agent confirms webhook delivery to user's endpoint
@@ -710,7 +710,7 @@
 
 <span class="c-amber">AUTH_TYPE</span>: Bearer token
 <span class="c-amber">KEY_SOURCE</span>: User retrieves from https://mentionwatch.com/welcome
-             after completing Stripe checkout
+             after completing Creem checkout
 
 <span class="c-amber">TASK</span>: Guide user through complete setup. Ask for their API key
       first, then execute each curl command. Confirm success at
@@ -788,9 +788,9 @@ curl -s -X POST https://api.mentionwatch.com/api/webhooks/test \
               <h3>Sign up</h3>
               <p>Choose a plan and complete checkout. No trial period friction — you get your API key immediately.</p>
               <p>
-                <a href="STRIPE_CHECKOUT_STARTER_URL" class="step-link">Starter — $19/mo</a>
+                <a href="CREEM_CHECKOUT_STARTER_URL" class="step-link">Starter — $19/mo</a>
                 &nbsp;&nbsp;
-                <a href="STRIPE_CHECKOUT_PRO_URL" class="step-link">Pro — $49/mo</a>
+                <a href="CREEM_CHECKOUT_PRO_URL" class="step-link">Pro — $49/mo</a>
               </p>
             </div>
           </div>
@@ -1115,7 +1115,7 @@ app = Flask(__name__)
             <h3>Ready to set up?</h3>
             <p>API key in 60 seconds. Webhook running in 90.</p>
           </div>
-          <a href="STRIPE_CHECKOUT_STARTER_URL" class="btn-primary">Start for $19/mo</a>
+          <a href="CREEM_CHECKOUT_STARTER_URL" class="btn-primary">Start for $19/mo</a>
         </div>
 
       </div>

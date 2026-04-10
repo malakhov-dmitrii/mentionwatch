@@ -10,8 +10,8 @@ binding = "KV"
 id = "YOUR_KV_NAMESPACE_ID"
 
 [vars]
-STRIPE_WEBHOOK_SECRET = ""
-LANDING_URL = "https://mentionwatch.com"
+LANDING_URL = "https://mentionwatch.mlh.one"
 
-# Set these as secrets via: wrangler secret put STRIPE_SECRET_KEY
-# wrangler secret put STRIPE_WEBHOOK_SECRET
+# Set these as secrets via:
+# wrangler secret put CREEM_API_KEY
+# wrangler secret put CREEM_WEBHOOK_SECRET
