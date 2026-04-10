@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-mono);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+::selection {
+  background: rgba(245, 158, 11, 0.25);
+}
+
+/* FAQ accordion */
+details summary {
+  list-style: none;
+  cursor: pointer;
+}
+details summary::-webkit-details-marker {
+  display: none;
+}
+details[open] .faq-icon {
+  transform: rotate(45deg);
+  color: #f59e0b;
+}
+
+/* Pricing features */
+.feat li {
+  font-size: 14px;
+  color: #a1a1aa;
+  padding-left: 20px;
+  position: relative;
+  line-height: 1.5;
+}
+.feat li::before {
+  content: "\2014";
+  position: absolute;
+  left: 0;
+  color: #3f3f46;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 12px;
+}
+
+/* Code scrollbar */
+pre::-webkit-scrollbar {
+  height: 3px;
+}
+pre::-webkit-scrollbar-track {
+  background: transparent;
+}
+pre::-webkit-scrollbar-thumb {
+  background: #27272a;
+}
+
+/* Fade in */
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.enter {
+  animation: enter 0.5s cubic-bezier(0.22, 0.68, 0, 1.05) both;
+}
+.enter-d1 {
+  animation-delay: 80ms;
+}
+.enter-d2 {
+  animation-delay: 180ms;
+}
