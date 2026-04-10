@@ -217,7 +217,7 @@ $ curl -X POST mentionwatch.mlh.one/api/keywords \\
                   <li>HMAC signatures</li>
                   <li>Email support</li>
                 </ul>
-                <a href="CREEM_CHECKOUT_STARTER_URL" className="block text-center h-12 leading-[48px] font-mono text-[13px] tracking-wider text-zinc-500 border border-zinc-800 hover:text-zinc-300 hover:border-zinc-600 transition-colors no-underline">Start free trial</a>
+                <a href="https://creem.io/test/product/prod_7KMPiCrpfutT0jRedmqdot" className="block text-center h-12 leading-[48px] font-mono text-[13px] tracking-wider text-zinc-500 border border-zinc-800 hover:text-zinc-300 hover:border-zinc-600 transition-colors no-underline">Start free trial</a>
               </div>
               <div className="bg-[#0b0b0d] p-8 md:p-9">
                 <div className="mb-4"><span className="inline-block font-mono text-[10px] tracking-[0.1em] uppercase bg-amber-500 text-black px-2.5 py-1">Most popular</span></div>
@@ -234,7 +234,7 @@ $ curl -X POST mentionwatch.mlh.one/api/keywords \\
                   <li>Priority support + early access to new sources</li>
                   <li>Priority support</li>
                 </ul>
-                <a href="CREEM_CHECKOUT_PRO_URL" className="block text-center h-12 leading-[48px] font-mono text-[13px] tracking-wider bg-amber-500 text-black hover:bg-amber-600 transition-colors no-underline">Start free trial</a>
+                <a href="https://creem.io/test/product/prod_5gIpEho4FkN6h85zi3oXur" className="block text-center h-12 leading-[48px] font-mono text-[13px] tracking-wider bg-amber-500 text-black hover:bg-amber-600 transition-colors no-underline">Start free trial</a>
               </div>
             </div>
             <p className="mt-5 font-mono text-[12px] text-zinc-600">Need more?{" "}<a href="mailto:mitia2022@gmail.com" className="text-amber-500 hover:text-amber-400 transition-colors no-underline">mitia2022@gmail.com</a> — we do custom plans.</p>
