@@ -1,6 +1,6 @@
 import { hmacSign } from "./crypto";
 
-const RETRY_DELAYS = [0, 10_000, 60_000, 300_000]; // 4 attempts: immediate, 10s, 60s, 5min
+export const RETRY_DELAYS = [0, 10_000, 60_000, 300_000]; // 4 attempts: immediate, 10s, 60s, 5min
 
 export interface WebhookPayload {
   id: string;
@@ -19,13 +19,14 @@ export interface WebhookPayload {
 export async function deliverWebhook(
   webhookUrl: string,
   webhookSecret: string,
-  payload: WebhookPayload
+  payload: WebhookPayload,
+  retryDelays = RETRY_DELAYS
 ): Promise<{ success: boolean; attempts: number; lastError?: string }> {
   const body = JSON.stringify(payload);
   const signature = await hmacSign(body, webhookSecret);
 
-  for (let attempt = 0; attempt < RETRY_DELAYS.length; attempt++) {
-    const delay = RETRY_DELAYS[attempt];
+  for (let attempt = 0; attempt < retryDelays.length; attempt++) {
+    const delay = retryDelays[attempt];
     if (delay > 0) {
       await new Promise((r) => setTimeout(r, delay));
     }
@@ -51,7 +52,7 @@ export async function deliverWebhook(
 
   return {
     success: false,
-    attempts: RETRY_DELAYS.length,
+    attempts: retryDelays.length,
     lastError: "All delivery attempts failed",
   };
 }
