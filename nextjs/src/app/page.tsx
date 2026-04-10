@@ -116,40 +116,6 @@ $ curl -X POST mentionwatch.mlh.one/api/keywords \\
 
       <CopyPrompt />
 
-      {/* Payload Preview */}
-      <section className="border-t border-zinc-800/50 py-20">
-        <div className="max-w-[860px] mx-auto px-6">
-          <p className="font-mono text-[11px] text-zinc-600 uppercase tracking-[0.14em] mb-3">Webhook payload</p>
-          <p className="text-[17px] text-zinc-300 leading-relaxed mb-8 max-w-[500px]">
-            What your endpoint receives on every mention match. Every delivery is signed with HMAC-SHA256.
-          </p>
-          <div className="border border-zinc-800/70 bg-[#111113] shadow-xl shadow-black/20">
-            <div className="flex items-center justify-between px-4 py-2.5 border-b border-zinc-800/50 bg-[#0c0c0e]">
-              <span className="font-mono text-[11px] text-zinc-600">POST your-app.com/webhook</span>
-              <span className="font-mono text-[10px] text-zinc-700">application/json</span>
-            </div>
-            <pre className="p-5 font-mono text-[12.5px] leading-[1.75] overflow-x-auto">{
-`{
-  "id":           "mw_evt_2xKj9mPq",
-  "keyword":      "my-product",
-  "source":       "hackernews",
-  "type":         "story",
-  "title":        "Show HN: My Product — analytics for dev teams",
-  "text":         "We just launched My Product, a tool that...",
-  "author":       "tptacek",
-  "url":          "https://news.ycombinator.com/item?id=41234567",
-  "source_url":   "https://my-product.com",
-  "timestamp":    "2026-04-10T09:15:00Z",
-  "delivered_at": "2026-04-10T09:15:12Z"
-}`
-            }</pre>
-          </div>
-          <p className="mt-4 font-mono text-[11px] text-zinc-600">
-            Header: <span className="text-amber-500/60">X-MentionWatch-Signature: sha256=&lt;hmac&gt;</span>
-          </p>
-        </div>
-      </section>
-
       {/* How it works */}
       <section className="border-t border-zinc-800/50 py-20">
         <div className="max-w-[660px] mx-auto px-6">
