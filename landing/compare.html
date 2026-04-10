@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MentionWatch vs Alternatives — Honest Comparison for Developers</title>
+  <meta name="description" content="MentionWatch vs Mention.com, Brand24, Brandwatch, and building your own. Honest comparison on price, API access, webhooks, and developer experience.">
+  <meta property="og:title" content="MentionWatch vs Alternatives — Social Media Monitoring Comparison">
+  <meta property="og:description" content="Developer-focused comparison of social media monitoring tools. MentionWatch wins on price, simplicity, and API-first design.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- AI agent discovery hints -->
+  <meta name="keywords" content="social media monitoring API, mention monitoring alternatives, brand monitoring API, webhook monitoring, developer monitoring tool, HN monitoring, Reddit monitoring API">
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📡</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwindcss.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+            serif: ['Georgia', '"Times New Roman"', 'serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    :root {
+      --bg:         #111111;
+      --surface:    #1a1a1a;
+      --border:     #333333;
+      --border-dim: #222222;
+      --text:       #d4d4d4;
+      --text-dim:   #8a8a8a;
+      --text-muted: #555555;
+      --amber:      #f59e0b;
+      --amber-dim:  #d97706;
+      --amber-faint:rgba(245, 158, 11, 0.08);
+      --amber-glow: rgba(245, 158, 11, 0.15);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { background: var(--bg); }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .serif { font-family: Georgia, 'Times New Roman', serif; }
+
+    h1, h2, h3, h4 {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-weight: normal;
+      letter-spacing: -0.01em;
+      color: #e8e8e8;
+    }
+
+    em { font-style: italic; }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 28px;
+    }
+
+    .container-narrow {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 28px;
+    }
+
+    .rule {
+      border: none;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── Nav ────────────────────────────────────────────────────────────── */
+
+    .nav {
+      border-bottom: 1px solid var(--border);
+      height: 52px;
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 28px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 15px;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -0.01em;
+    }
+
+    .nav-logo span {
+      color: var(--amber);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .nav-link {
+      font-size: 13px;
+      color: var(--text-dim);
+      text-decoration: none;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.02em;
+      transition: color 0.15s;
+    }
+    .nav-link:hover { color: var(--text); }
+    .nav-link.active { color: var(--amber); }
+
+    .nav-cta {
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.04em;
+      color: var(--bg);
+      background: var(--amber);
+      padding: 6px 14px;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .nav-cta:hover { background: var(--amber-dim); }
+
+    /* ── Page header ────────────────────────────────────────────────────── */
+
+    .page-header {
+      padding: 64px 0 52px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .page-kicker {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--amber);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .page-h1 {
+      font-size: clamp(30px, 4vw, 44px);
+      line-height: 1.1;
+      margin-bottom: 16px;
+      color: #f0ede8;
+      letter-spacing: -0.02em;
+    }
+
+    .page-sub {
+      font-size: 17px;
+      color: var(--text-dim);
+      line-height: 1.7;
+      max-width: 560px;
+    }
+
+    /* ── Section ────────────────────────────────────────────────────────── */
+
+    .section {
+      padding: 64px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section:last-of-type {
+      border-bottom: none;
+    }
+
+    .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+    }
+
+    .section-h2 {
+      font-size: clamp(22px, 2.5vw, 28px);
+      margin-bottom: 10px;
+      color: #e8e8e8;
+    }
+
+    .section-intro {
+      font-size: 15px;
+      color: var(--text-dim);
+      margin-bottom: 36px;
+      max-width: 580px;
+      line-height: 1.7;
+    }
+
+    /* ── Comparison table ───────────────────────────────────────────────── */
+
+    .table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      min-width: 780px;
+    }
+
+    thead th {
+      padding: 14px 16px;
+      text-align: left;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      white-space: nowrap;
+    }
+
+    thead th.col-us {
+      color: var(--amber);
+      background: var(--amber-faint);
+    }
+
+    thead th:not(:last-child) {
+      border-right: 1px solid var(--border-dim);
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border-dim);
+      transition: background 0.1s;
+    }
+
+    tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: rgba(255,255,255,0.02);
+    }
+
+    tbody td {
+      padding: 13px 16px;
+      vertical-align: top;
+      line-height: 1.5;
+    }
+
+    tbody td:not(:last-child) {
+      border-right: 1px solid var(--border-dim);
+    }
+
+    td.row-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-dim);
+      white-space: nowrap;
+      background: var(--surface);
+    }
+
+    td.col-us {
+      background: var(--amber-faint);
+      color: var(--text);
+    }
+
+    td.col-other {
+      color: var(--text-dim);
+    }
+
+    .check {
+      color: #4ade80;
+      font-size: 14px;
+    }
+
+    .cross {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      padding: 2px 7px;
+      background: var(--amber-glow);
+      color: var(--amber);
+      border: 1px solid rgba(245,158,11,0.25);
+    }
+
+    /* ── Checklist sections ─────────────────────────────────────────────── */
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+    }
+
+    .checklist-card {
+      border: 1px solid var(--border);
+      padding: 28px;
+    }
+
+    .checklist-card.highlight {
+      border-color: rgba(245,158,11,0.3);
+      background: var(--amber-faint);
+    }
+
+    .checklist-card h3 {
+      font-size: 17px;
+      margin-bottom: 20px;
+      color: #e8e8e8;
+    }
+
+    .checklist-card.highlight h3 {
+      color: var(--amber);
+    }
+
+    .checklist {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+
+    .checklist li {
+      font-size: 14px;
+      color: var(--text-dim);
+      padding-left: 22px;
+      position: relative;
+      line-height: 1.5;
+    }
+
+    .checklist li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--amber);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+    }
+
+    .checklist.no li::before {
+      content: '×';
+      color: var(--text-muted);
+    }
+
+    /* ── CTA strip ──────────────────────────────────────────────────────── */
+
+    .cta-strip {
+      padding: 56px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .cta-strip h2 {
+      font-size: clamp(22px, 2.5vw, 30px);
+      margin-bottom: 10px;
+    }
+
+    .cta-strip p {
+      color: var(--text-dim);
+      font-size: 15px;
+      margin-bottom: 28px;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      background: var(--amber);
+      color: #111111;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      padding: 11px 22px;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .btn-primary:hover { background: var(--amber-dim); }
+
+    .btn-ghost {
+      display: inline-block;
+      color: var(--text-dim);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      padding: 11px 22px;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-ghost:hover { border-color: var(--text-dim); color: var(--text); }
+
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    /* ── Footer ─────────────────────────────────────────────────────────── */
+
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 26px 0;
+    }
+
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-brand {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 22px;
+    }
+
+    .footer-link {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .footer-link:hover { color: var(--text-dim); }
+
+    /* ── Responsive ─────────────────────────────────────────────────────── */
+
+    @media (max-width: 680px) {
+      .two-col { grid-template-columns: 1fr; }
+      .page-h1 { font-size: 28px; }
+      .table-wrap { margin: 0 -28px; }
+    }
+  </style>
+
+  <!-- Structured data for AI agents and search engines -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "MentionWatch vs Alternatives — Social Media Monitoring Comparison",
+    "description": "Honest comparison of social media monitoring tools for developers: MentionWatch vs Mention.com, Brand24, Brandwatch, and building your own. Compared on price, API access, webhooks, setup time, and developer experience.",
+    "url": "https://mentionwatch.com/compare.html",
+    "mainEntity": {
+      "@type": "Table",
+      "about": "Social media monitoring tool comparison",
+      "description": "Feature and pricing comparison between MentionWatch, Mention.com, Brand24, Brandwatch, and self-built monitoring solutions"
+    },
+    "breadcrumb": {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "MentionWatch",
+          "item": "https://mentionwatch.com"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Compare",
+          "item": "https://mentionwatch.com/compare.html"
+        }
+      ]
+    },
+    "mentions": [
+      {
+        "@type": "SoftwareApplication",
+        "name": "MentionWatch",
+        "applicationCategory": "DeveloperApplication",
+        "offers": {
+          "@type": "Offer",
+          "price": "19",
+          "priceCurrency": "USD",
+          "billingIncrement": "P1M"
+        },
+        "description": "API-first social media monitoring with signed webhooks. Monitors HN and Reddit. Setup in 90 seconds. Developer-focused."
+      },
+      {
+        "@type": "SoftwareApplication",
+        "name": "Mention.com",
+        "applicationCategory": "BusinessApplication",
+        "offers": {
+          "@type": "Offer",
+          "price": "41",
+          "priceCurrency": "USD",
+          "billingIncrement": "P1M"
+        }
+      },
+      {
+        "@type": "SoftwareApplication",
+        "name": "Brand24",
+        "applicationCategory": "BusinessApplication",
+        "offers": {
+          "@type": "Offer",
+          "price": "79",
+          "priceCurrency": "USD",
+          "billingIncrement": "P1M"
+        }
+      },
+      {
+        "@type": "SoftwareApplication",
+        "name": "Brandwatch",
+        "applicationCategory": "BusinessApplication",
+        "offers": {
+          "@type": "Offer",
+          "price": "800",
+          "priceCurrency": "USD",
+          "billingIncrement": "P1M"
+        }
+      }
+    ]
+  }
+  </script>
+
+  <script defer data-domain="mentionwatch.com" src="https://plausible.io/js/script.js"></script>
+</head>
+<body>
+
+  <!-- ─── Nav ──────────────────────────────────────────────────────────── -->
+  <header class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">Mention<span>Watch</span></a>
+      <nav class="nav-links">
+        <a href="/#pricing" class="nav-link">pricing</a>
+        <a href="/docs.html" class="nav-link">docs</a>
+        <a href="/compare.html" class="nav-link active">compare</a>
+        <a href="/#pricing" class="nav-cta">Get started</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ─── Page header ──────────────────────────────────────────────────── -->
+  <div class="page-header">
+    <div class="container-narrow">
+      <p class="page-kicker">Comparison</p>
+      <h1 class="page-h1">MentionWatch vs alternatives</h1>
+      <p class="page-sub">Honest comparison. We win on price, simplicity, and developer experience. We'll tell you when we don't.</p>
+    </div>
+  </div>
+
+  <!-- ─── Section 1: Full comparison table ─────────────────────────────── -->
+  <section class="section">
+    <div class="container">
+      <p class="section-label">01 — Full comparison</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="min-width:160px"></th>
+              <th class="col-us">MentionWatch</th>
+              <th>Mention.com</th>
+              <th>Brand24</th>
+              <th>Brandwatch</th>
+              <th>Build your own</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="row-label">Monthly price</td>
+              <td class="col-us"><strong>$19</strong> <span class="badge">lowest</span></td>
+              <td class="col-other">$41</td>
+              <td class="col-other">$79</td>
+              <td class="col-other">$800+</td>
+              <td class="col-other">$0 + your time</td>
+            </tr>
+            <tr>
+              <td class="row-label">API access</td>
+              <td class="col-us"><span class="check">✓</span> Core product</td>
+              <td class="col-other">Limited add-on</td>
+              <td class="col-other"><span class="check">✓</span> Yes</td>
+              <td class="col-other"><span class="check">✓</span> Yes</td>
+              <td class="col-other">You build it</td>
+            </tr>
+            <tr>
+              <td class="row-label">Webhook delivery</td>
+              <td class="col-us"><span class="check">✓</span> Yes, signed</td>
+              <td class="col-other"><span class="cross">✗</span> No</td>
+              <td class="col-other"><span class="cross">✗</span> No</td>
+              <td class="col-other">Enterprise only</td>
+              <td class="col-other">You build it</td>
+            </tr>
+            <tr>
+              <td class="row-label">Setup time</td>
+              <td class="col-us"><span class="check">✓</span> 90 seconds</td>
+              <td class="col-other">~30 min</td>
+              <td class="col-other">~30 min</td>
+              <td class="col-other">Days / weeks</td>
+              <td class="col-other">Days / weeks</td>
+            </tr>
+            <tr>
+              <td class="row-label">Dashboard</td>
+              <td class="col-us">No (API-only)</td>
+              <td class="col-other">Yes (primary)</td>
+              <td class="col-other">Yes (primary)</td>
+              <td class="col-other">Yes (primary)</td>
+              <td class="col-other">You build it</td>
+            </tr>
+            <tr>
+              <td class="row-label">Sources (current)</td>
+              <td class="col-us">HN, Reddit</td>
+              <td class="col-other">10+</td>
+              <td class="col-other">10+</td>
+              <td class="col-other">50+</td>
+              <td class="col-other">Depends</td>
+            </tr>
+            <tr>
+              <td class="row-label">HMAC signatures</td>
+              <td class="col-us"><span class="check">✓</span> Yes</td>
+              <td class="col-other"><span class="cross">✗</span> No</td>
+              <td class="col-other"><span class="cross">✗</span> No</td>
+              <td class="col-other"><span class="check">✓</span> Yes</td>
+              <td class="col-other">You build it</td>
+            </tr>
+            <tr>
+              <td class="row-label">Retry policy</td>
+              <td class="col-us"><span class="check">✓</span> 3× exponential</td>
+              <td class="col-other">N/A</td>
+              <td class="col-other">N/A</td>
+              <td class="col-other"><span class="check">✓</span> Yes</td>
+              <td class="col-other">You build it</td>
+            </tr>
+            <tr>
+              <td class="row-label">AI-agent setup</td>
+              <td class="col-us"><span class="check">✓</span> Yes (llms.txt)</td>
+              <td class="col-other"><span class="cross">✗</span> No</td>
+              <td class="col-other"><span class="cross">✗</span> No</td>
+              <td class="col-other"><span class="cross">✗</span> No</td>
+              <td class="col-other"><span class="cross">✗</span> No</td>
+            </tr>
+            <tr>
+              <td class="row-label">Target user</td>
+              <td class="col-us">Developers</td>
+              <td class="col-other">Marketing</td>
+              <td class="col-other">Marketing</td>
+              <td class="col-other">Enterprise</td>
+              <td class="col-other">—</td>
+            </tr>
+            <tr>
+              <td class="row-label">Free trial</td>
+              <td class="col-us">7 days</td>
+              <td class="col-other">14 days</td>
+              <td class="col-other">14 days</td>
+              <td class="col-other">Demo only</td>
+              <td class="col-other">—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p style="margin-top:16px; font-size:13px; color:var(--text-muted); font-family:'JetBrains Mono',monospace;">
+        Prices as of 2025. Sources limited = 2 HN + Reddit current, expanding quarterly.
+      </p>
+    </div>
+  </section>
+
+  <!-- ─── Section 2 & 3: When to choose / not choose ───────────────────── -->
+  <section class="section">
+    <div class="container">
+      <p class="section-label">02 — Fit analysis</p>
+
+      <div class="two-col">
+        <div class="checklist-card highlight">
+          <h3>When to choose MentionWatch</h3>
+          <ul class="checklist">
+            <li>You want webhooks delivered to your server, not a dashboard to check manually</li>
+            <li>You want to integrate monitoring into your existing workflow — Slack, PagerDuty, your own app</li>
+            <li>You're a developer or have a developer on your team</li>
+            <li>Your budget is under $50/mo</li>
+            <li>You're building an AI agent or automation that needs to consume mentions programmatically</li>
+          </ul>
+        </div>
+
+        <div class="checklist-card">
+          <h3>When <em>not</em> to choose MentionWatch</h3>
+          <ul class="checklist no">
+            <li>You need 50+ social media sources today — Brandwatch is the answer</li>
+            <li>You need a visual dashboard for a non-technical marketing team</li>
+            <li>You need built-in sentiment analysis (this is on our roadmap, not live)</li>
+            <li>You need an enterprise SLA, dedicated support, or SSO</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Section 4: When to build your own ───────────────────────────── -->
+  <section class="section">
+    <div class="container-narrow">
+      <p class="section-label">03 — When to build your own</p>
+
+      <h2 class="section-h2">Seriously consider building your own if…</h2>
+      <p class="section-intro">
+        We're not going to pretend a paid service always beats a DIY approach. For some use cases, rolling your own is the right call.
+      </p>
+
+      <ul class="checklist" style="margin-bottom: 32px;">
+        <li>You only need one source — the <a href="https://hn.algolia.com/api" style="color:var(--amber); text-decoration:none;">HN Algolia API</a> is free, well-documented, and handles basic keyword search out of the box</li>
+        <li>You have specific scraping needs or access to internal data sources we don't cover</li>
+        <li>You want full control over polling frequency, data retention, and storage format</li>
+        <li>You have engineering capacity and time is not a constraint</li>
+      </ul>
+
+      <p style="font-size:14px; color:var(--text-muted); line-height:1.7;">
+        The honest calculus: a simple poller takes 2–4 hours to build. Add retry logic, deduplication, delivery guarantees, and multi-source support and you're at 2–4 days. MentionWatch exists for the case where you'd rather ship product than plumbing.
+      </p>
+    </div>
+  </section>
+
+  <!-- ─── CTA ──────────────────────────────────────────────────────────── -->
+  <div class="cta-strip">
+    <div class="container-narrow">
+      <h2>Try MentionWatch free for 7 days</h2>
+      <p>No credit card required. First webhook delivered in under 90 seconds.</p>
+      <div class="btn-row">
+        <a href="/#pricing" class="btn-primary">Start free trial</a>
+        <a href="/docs.html" class="btn-ghost">Read the docs</a>
+        <a href="/" class="btn-ghost">Back to home</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Footer ───────────────────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <span class="footer-brand">MentionWatch</span>
+      <nav class="footer-links">
+        <a href="/docs.html" class="footer-link">docs</a>
+        <a href="/compare.html" class="footer-link">compare</a>
+        <a href="mailto:hello@mentionwatch.com" class="footer-link">contact</a>
+        <a href="https://twitter.com/mentionwatch" class="footer-link">twitter</a>
+      </nav>
+    </div>
+  </footer>
+
+</body>
+</html>
