@@ -1,130 +1,760 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Welcome to MentionWatch</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📡</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwindcss.config = {
-      theme: { extend: { colors: {
-        brand: { 400: '#38bdf8', 500: '#0ea5e9', 600: '#0284c7' },
-        surface: { 900: '#0f172a', 950: '#020617' }
-      }}}
+      theme: {
+        extend: {
+          fontFamily: {
+            mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+            serif: ['Georgia', '"Times New Roman"', 'serif'],
+          }
+        }
+      }
     }
   </script>
-  <style>.code-block { background: #0f172a; }</style>
+  <style>
+    :root {
+      --bg:          #111111;
+      --surface:     #1a1a1a;
+      --border:      #333333;
+      --border-dim:  #222222;
+      --text:        #d4d4d4;
+      --text-dim:    #8a8a8a;
+      --text-muted:  #555555;
+      --amber:       #f59e0b;
+      --amber-dim:   #d97706;
+      --amber-faint: rgba(245, 158, 11, 0.08);
+      --amber-glow:  rgba(245, 158, 11, 0.15);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { background: var(--bg); }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-weight: normal;
+      letter-spacing: -0.01em;
+      color: #e8e8e8;
+    }
+
+    em { font-style: italic; }
+
+    /* ── Nav ──────────────────────────────────────────────────────────── */
+
+    .nav {
+      border-bottom: 1px solid var(--border);
+      height: 52px;
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 28px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 15px;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -0.01em;
+    }
+
+    .nav-logo span { color: var(--amber); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .nav-link {
+      font-size: 13px;
+      color: var(--text-dim);
+      text-decoration: none;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.02em;
+      transition: color 0.15s;
+    }
+    .nav-link:hover { color: var(--text); }
+
+    /* ── Layout ───────────────────────────────────────────────────────── */
+
+    .container-narrow {
+      max-width: 672px;
+      margin: 0 auto;
+      padding: 0 28px;
+    }
+
+    .rule {
+      border: none;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── Page chrome ──────────────────────────────────────────────────── */
+
+    .page-header {
+      padding: 56px 0 0;
+    }
+
+    .page-kicker {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--amber);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .page-h1 {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: clamp(28px, 4vw, 40px);
+      color: #f0ede8;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 12px;
+      font-weight: normal;
+    }
+
+    .page-sub {
+      font-size: 15px;
+      color: var(--text-dim);
+      line-height: 1.65;
+      margin-bottom: 0;
+      max-width: 520px;
+    }
+
+    /* ── Credential cards ─────────────────────────────────────────────── */
+
+    .cred-section {
+      padding: 44px 0 0;
+    }
+
+    .cred-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      margin-bottom: 2px;
+    }
+
+    .cred-block:last-child { margin-bottom: 0; }
+
+    .cred-header {
+      padding: 14px 20px 12px;
+      border-bottom: 1px solid var(--border-dim);
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    .cred-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .cred-note {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-left: auto;
+    }
+
+    .cred-body {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .cred-value {
+      flex: 1;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--amber);
+      background: transparent;
+      border: none;
+      outline: none;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      cursor: text;
+      user-select: all;
+      min-width: 0;
+    }
+
+    .cred-value.secret {
+      color: #a8c9a8;
+    }
+
+    .copy-btn {
+      flex-shrink: 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      color: var(--text-dim);
+      background: transparent;
+      border: 1px solid var(--border);
+      padding: 5px 14px;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+    }
+    .copy-btn:hover {
+      color: var(--text);
+      border-color: #555;
+    }
+    .copy-btn.copied {
+      color: var(--amber);
+      border-color: rgba(245,158,11,0.4);
+      background: var(--amber-faint);
+    }
+
+    /* ── Quickstart ───────────────────────────────────────────────────── */
+
+    .qs-section {
+      padding: 48px 0 0;
+    }
+
+    .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 28px;
+    }
+
+    .qs-step {
+      display: grid;
+      grid-template-columns: 44px 1fr;
+      gap: 0;
+      padding: 28px 0;
+      border-bottom: 1px solid var(--border-dim);
+    }
+
+    .qs-step:first-of-type { border-top: 1px solid var(--border-dim); }
+
+    .qs-num {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 28px;
+      color: var(--amber);
+      line-height: 1.1;
+      padding-top: 3px;
+      opacity: 0.6;
+    }
+
+    .qs-body { padding: 4px 0 0; }
+
+    .qs-title {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 17px;
+      color: #e8e4de;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    .qs-desc {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    /* ── Code window ──────────────────────────────────────────────────── */
+
+    .code-window {
+      background: #141414;
+      border: 1px solid var(--border);
+    }
+
+    .code-titlebar {
+      background: #1f1f1f;
+      border-bottom: 1px solid var(--border);
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-r { background: #3a1a1a; }
+    .dot-y { background: #2e2818; }
+    .dot-g { background: #1a2e1a; }
+
+    .code-filename {
+      margin-left: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+
+    .code-window pre {
+      margin: 0;
+      padding: 18px 20px 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      line-height: 1.75;
+      overflow-x: auto;
+    }
+
+    /* Syntax tokens — same palette as index.html */
+    .c-comment { color: #4a4a4a; }
+    .c-cmd     { color: var(--amber); }
+    .c-flag    { color: #777; }
+    .c-url     { color: #c4bfba; }
+    .c-string  { color: #c9a96e; }
+    .c-key     { color: #e0cfa8; }
+    .c-val     { color: var(--amber); }
+    .c-punct   { color: #555; }
+    .c-prompt  { color: #3a3a3a; user-select: none; }
+    .c-brace   { color: #666; }
+    .c-var     { color: #a0c4a0; }
+
+    /* ── Plan info ────────────────────────────────────────────────────── */
+
+    .plan-section {
+      padding: 48px 0 0;
+    }
+
+    .plan-strip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 22px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .plan-info { display: flex; align-items: baseline; gap: 14px; }
+
+    .plan-badge {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--amber);
+      padding: 3px 10px;
+    }
+
+    .plan-name-text {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 16px;
+      color: #e0d8cc;
+    }
+
+    .plan-name-text em { color: var(--amber); }
+
+    .billing-link {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      text-decoration: none;
+      letter-spacing: 0.04em;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .billing-link:hover { color: var(--text-dim); border-color: #555; }
+
+    /* ── Loading / error states ───────────────────────────────────────── */
+
+    .state-loading {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.4; }
+    }
+
+    .error-strip {
+      background: rgba(220, 38, 38, 0.06);
+      border: 1px solid rgba(220, 38, 38, 0.2);
+      padding: 14px 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: #f87171;
+      letter-spacing: 0.02em;
+      margin-bottom: 32px;
+      display: none;
+    }
+
+    /* ── Footer ───────────────────────────────────────────────────────── */
+
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 26px 0;
+      margin-top: 72px;
+    }
+
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-brand {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 14px;
+      color: var(--text-dim);
+    }
+
+    .footer-links { display: flex; gap: 22px; }
+
+    .footer-link {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      text-decoration: none;
+      letter-spacing: 0.03em;
+      transition: color 0.15s;
+    }
+    .footer-link:hover { color: var(--text-dim); }
+
+    /* ── Animations ───────────────────────────────────────────────────── */
+
+    @keyframes appear {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .appear    { animation: appear 0.55s cubic-bezier(.22,.68,0,1.2) both; }
+    .appear-d1 { animation-delay: 0.08s; }
+    .appear-d2 { animation-delay: 0.18s; }
+    .appear-d3 { animation-delay: 0.28s; }
+    .appear-d4 { animation-delay: 0.38s; }
+
+    /* ── Responsive ───────────────────────────────────────────────────── */
+
+    @media (max-width: 540px) {
+      .container-narrow { padding: 0 18px; }
+      .page-h1 { font-size: 26px; }
+      .plan-strip { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
 </head>
-<body class="bg-surface-950 text-gray-100 antialiased min-h-screen flex items-center justify-center px-4">
-  <div class="max-w-2xl w-full">
-    <div class="text-center mb-10">
-      <div class="text-5xl mb-4">🎉</div>
-      <h1 class="text-3xl font-bold mb-2">Welcome to MentionWatch</h1>
-      <p class="text-gray-400">Your account is ready. Here's everything you need to get started.</p>
-    </div>
+<body>
 
-    <!-- API Key -->
-    <div class="bg-surface-900 border border-gray-800 rounded-xl p-6 mb-6">
-      <h2 class="text-sm font-medium text-gray-400 mb-2">Your API Key</h2>
-      <div class="flex items-center gap-3">
-        <code id="api-key" class="flex-1 bg-gray-800 px-4 py-3 rounded-lg font-mono text-sm text-brand-400 select-all">mw_live_loading...</code>
-        <button onclick="copyKey()" id="copy-btn" class="bg-gray-800 hover:bg-gray-700 px-4 py-3 rounded-lg text-sm font-medium transition">
-          Copy
-        </button>
+  <!-- ─── Nav ──────────────────────────────────────────────────────────── -->
+  <header class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">Mention<span>Watch</span></a>
+      <nav class="nav-links">
+        <a href="/docs.html" class="nav-link">docs</a>
+        <a href="mailto:support@mentionwatch.com" class="nav-link">support</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="container-narrow">
+
+      <!-- ─── Page header ──────────────────────────────────────────────── -->
+      <div class="page-header appear">
+        <p class="page-kicker">Account active</p>
+        <h1 class="page-h1">Welcome to MentionWatch</h1>
+        <p class="page-sub">
+          Your API key and webhook secret are below. Save them now &mdash; the key is shown once.
+        </p>
       </div>
-      <p class="text-xs text-gray-500 mt-2">Keep this secret. It's shown only once. Store it in your environment variables.</p>
-    </div>
 
-    <!-- Webhook Secret -->
-    <div class="bg-surface-900 border border-gray-800 rounded-xl p-6 mb-6">
-      <h2 class="text-sm font-medium text-gray-400 mb-2">Webhook Signing Secret</h2>
-      <div class="flex items-center gap-3">
-        <code id="webhook-secret" class="flex-1 bg-gray-800 px-4 py-3 rounded-lg font-mono text-sm text-green-400 select-all">mw_whsec_loading...</code>
-        <button onclick="copySecret()" id="copy-secret-btn" class="bg-gray-800 hover:bg-gray-700 px-4 py-3 rounded-lg text-sm font-medium transition">
-          Copy
-        </button>
-      </div>
-      <p class="text-xs text-gray-500 mt-2">Use this to verify webhook signatures. See <a href="/docs.html#verification" class="text-brand-400 hover:underline">verification docs</a>.</p>
-    </div>
+      <!-- ─── Error strip ──────────────────────────────────────────────── -->
+      <div class="error-strip" id="error-strip" role="alert"></div>
 
-    <!-- Quick Start -->
-    <div class="bg-surface-900 border border-gray-800 rounded-xl p-6 mb-6">
-      <h2 class="text-lg font-bold mb-4">Quick Start (90 seconds)</h2>
-      <div class="space-y-4">
-        <div>
-          <div class="text-xs text-brand-400 font-mono mb-1">Step 1: Add a keyword</div>
-          <div class="code-block rounded-lg p-3 border border-gray-800">
-            <pre class="text-sm overflow-x-auto"><code>curl -X POST https://api.mentionwatch.com/api/keywords \
-  -H "Authorization: Bearer YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"keyword": "my-product"}'</code></pre>
+      <!-- ─── Credentials ──────────────────────────────────────────────── -->
+      <section class="cred-section appear appear-d1" aria-label="API credentials">
+
+        <!-- API Key -->
+        <div class="cred-block">
+          <div class="cred-header">
+            <span class="cred-label">API Key</span>
+            <span class="cred-note">Keep this secret &mdash; treat like a password</span>
+          </div>
+          <div class="cred-body">
+            <span class="cred-value" id="api-key" role="textbox" aria-label="API key" aria-readonly="true">
+              <span class="state-loading">loading...</span>
+            </span>
+            <button class="copy-btn" id="copy-key-btn" onclick="copyToClipboard('api-key', 'copy-key-btn')" aria-label="Copy API key">
+              copy
+            </button>
           </div>
         </div>
-        <div>
-          <div class="text-xs text-brand-400 font-mono mb-1">Step 2: Set your webhook URL</div>
-          <div class="code-block rounded-lg p-3 border border-gray-800">
-            <pre class="text-sm overflow-x-auto"><code>curl -X POST https://api.mentionwatch.com/api/webhooks \
-  -H "Authorization: Bearer YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"url": "https://your-app.com/webhook"}'</code></pre>
+
+        <!-- Webhook Secret -->
+        <div class="cred-block">
+          <div class="cred-header">
+            <span class="cred-label">Webhook Signing Secret</span>
+            <span class="cred-note">Verify incoming webhook payloads</span>
+          </div>
+          <div class="cred-body">
+            <span class="cred-value secret" id="webhook-secret" role="textbox" aria-label="Webhook signing secret" aria-readonly="true">
+              <span class="state-loading">loading...</span>
+            </span>
+            <button class="copy-btn" id="copy-secret-btn" onclick="copyToClipboard('webhook-secret', 'copy-secret-btn')" aria-label="Copy webhook signing secret">
+              copy
+            </button>
           </div>
         </div>
-        <div>
-          <div class="text-xs text-brand-400 font-mono mb-1">Step 3: Send a test webhook</div>
-          <div class="code-block rounded-lg p-3 border border-gray-800">
-            <pre class="text-sm overflow-x-auto"><code>curl -X POST https://api.mentionwatch.com/api/webhooks/test \
-  -H "Authorization: Bearer YOUR_API_KEY"</code></pre>
+
+      </section>
+
+      <!-- ─── Quickstart ───────────────────────────────────────────────── -->
+      <section class="qs-section appear appear-d2" aria-label="Quickstart guide">
+        <p class="section-label">Quickstart &mdash; 90 seconds</p>
+
+        <!-- Step 1 -->
+        <div class="qs-step">
+          <div class="qs-num">1</div>
+          <div class="qs-body">
+            <h2 class="qs-title">Add a keyword to monitor</h2>
+            <p class="qs-desc">
+              POST a keyword string. MentionWatch begins scanning immediately across all active sources.
+            </p>
+            <div class="code-window">
+              <div class="code-titlebar">
+                <div class="dot dot-r"></div>
+                <div class="dot dot-y"></div>
+                <div class="dot dot-g"></div>
+                <span class="code-filename">01-add-keyword.sh</span>
+              </div>
+              <pre><span class="c-prompt">$</span> <span class="c-cmd">curl</span> <span class="c-flag">-X POST</span> <span class="c-url">https://api.mentionwatch.com/api/keywords</span> <span class="c-flag">\</span>
+    <span class="c-flag">-H</span> <span class="c-string">"Authorization: Bearer <span class="c-var">$MW_API_KEY</span>"</span> <span class="c-flag">\</span>
+    <span class="c-flag">-H</span> <span class="c-string">"Content-Type: application/json"</span> <span class="c-flag">\</span>
+    <span class="c-flag">-d</span> <span class="c-string">'{"keyword": "my-product"}'</span></pre>
+            </div>
           </div>
-          <p class="text-xs text-gray-500 mt-1">This sends a sample payload to your webhook URL immediately.</p>
         </div>
-      </div>
-    </div>
 
-    <!-- Plan Info -->
-    <div class="bg-surface-900 border border-gray-800 rounded-xl p-6 mb-6">
-      <h2 class="text-sm font-medium text-gray-400 mb-2">Your Plan</h2>
-      <div class="flex justify-between items-center">
-        <div>
-          <span id="plan-name" class="text-lg font-bold">Loading...</span>
-          <span class="text-gray-500 text-sm ml-2">7-day free trial</span>
+        <!-- Step 2 -->
+        <div class="qs-step">
+          <div class="qs-num">2</div>
+          <div class="qs-body">
+            <h2 class="qs-title">Register your webhook endpoint</h2>
+            <p class="qs-desc">
+              Point MentionWatch at your server. Every keyword match fires a signed POST to this URL.
+            </p>
+            <div class="code-window">
+              <div class="code-titlebar">
+                <div class="dot dot-r"></div>
+                <div class="dot dot-y"></div>
+                <div class="dot dot-g"></div>
+                <span class="code-filename">02-set-webhook.sh</span>
+              </div>
+              <pre><span class="c-prompt">$</span> <span class="c-cmd">curl</span> <span class="c-flag">-X POST</span> <span class="c-url">https://api.mentionwatch.com/api/webhooks</span> <span class="c-flag">\</span>
+    <span class="c-flag">-H</span> <span class="c-string">"Authorization: Bearer <span class="c-var">$MW_API_KEY</span>"</span> <span class="c-flag">\</span>
+    <span class="c-flag">-H</span> <span class="c-string">"Content-Type: application/json"</span> <span class="c-flag">\</span>
+    <span class="c-flag">-d</span> <span class="c-string">'{"url": "https://yourapp.com/webhooks/mentions"}'</span></pre>
+            </div>
+          </div>
         </div>
-        <a href="STRIPE_BILLING_PORTAL_URL" class="text-sm text-gray-400 hover:text-white transition">Manage billing →</a>
-      </div>
-    </div>
 
-    <!-- Next Steps -->
-    <div class="text-center text-gray-500 text-sm">
-      <p>Need help? <a href="/docs.html" class="text-brand-400 hover:underline">Read the docs</a> or email <a href="mailto:hello@mentionwatch.com" class="text-brand-400 hover:underline">hello@mentionwatch.com</a></p>
+        <!-- Step 3 -->
+        <div class="qs-step">
+          <div class="qs-num">3</div>
+          <div class="qs-body">
+            <h2 class="qs-title">Fire a test payload</h2>
+            <p class="qs-desc">
+              Sends a sample mention event to your webhook so you can verify your handler before real mentions arrive.
+            </p>
+            <div class="code-window">
+              <div class="code-titlebar">
+                <div class="dot dot-r"></div>
+                <div class="dot dot-y"></div>
+                <div class="dot dot-g"></div>
+                <span class="code-filename">03-test-webhook.sh</span>
+              </div>
+              <pre><span class="c-prompt">$</span> <span class="c-cmd">curl</span> <span class="c-flag">-X POST</span> <span class="c-url">https://api.mentionwatch.com/api/webhooks/test</span> <span class="c-flag">\</span>
+    <span class="c-flag">-H</span> <span class="c-string">"Authorization: Bearer <span class="c-var">$MW_API_KEY</span>"</span>
+
+<span class="c-comment"># Your endpoint receives:</span>
+<span class="c-brace">{</span>
+  <span class="c-key">"event"</span><span class="c-punct">:</span>    <span class="c-val">"mention.created"</span><span class="c-punct">,</span>
+  <span class="c-key">"keyword"</span><span class="c-punct">:</span>  <span class="c-val">"my-product"</span><span class="c-punct">,</span>
+  <span class="c-key">"source"</span><span class="c-punct">:</span>   <span class="c-val">"hackernews"</span><span class="c-punct">,</span>
+  <span class="c-key">"title"</span><span class="c-punct">:</span>    <span class="c-val">"Show HN: My Product is live"</span><span class="c-punct">,</span>
+  <span class="c-key">"url"</span><span class="c-punct">:</span>      <span class="c-val">"https://news.ycombinator.com/item?id=..."</span>
+<span class="c-brace">}</span></pre>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ─── Plan info ─────────────────────────────────────────────────── -->
+      <section class="plan-section appear appear-d3" aria-label="Plan information">
+        <p class="section-label">Your plan</p>
+        <div class="plan-strip">
+          <div class="plan-info">
+            <span class="plan-badge" id="plan-badge">Pro</span>
+            <span class="plan-name-text" id="plan-name">
+              <em><span class="state-loading" style="font-style:normal">loading...</span></em>
+            </span>
+          </div>
+          <a href="https://billing.stripe.com/p/login/mentionwatch" class="billing-link" target="_blank" rel="noopener">
+            Manage billing &rarr;
+          </a>
+        </div>
+      </section>
+
+    </div><!-- /container-narrow -->
+  </main>
+
+  <!-- ─── Footer ────────────────────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <span class="footer-brand">MentionWatch</span>
+      <nav class="footer-links" aria-label="Footer navigation">
+        <a href="/docs.html" class="footer-link">docs</a>
+        <a href="https://api.mentionwatch.com/docs" class="footer-link">api reference</a>
+        <a href="mailto:support@mentionwatch.com" class="footer-link">support@mentionwatch.com</a>
+      </nav>
     </div>
-  </div>
+  </footer>
 
   <script>
-    function copyKey() {
-      navigator.clipboard.writeText(document.getElementById('api-key').textContent);
-      document.getElementById('copy-btn').textContent = 'Copied!';
-      setTimeout(() => document.getElementById('copy-btn').textContent = 'Copy', 2000);
-    }
-    function copySecret() {
-      navigator.clipboard.writeText(document.getElementById('webhook-secret').textContent);
-      document.getElementById('copy-secret-btn').textContent = 'Copied!';
-      setTimeout(() => document.getElementById('copy-secret-btn').textContent = 'Copy', 2000);
+    // ── Fetch welcome data ──────────────────────────────────────────────────
+
+    const API_BASE = 'https://api.mentionwatch.com';
+
+    function getSessionId() {
+      return new URLSearchParams(window.location.search).get('session_id');
     }
 
-    // Parse URL params from Stripe redirect
-    const params = new URLSearchParams(window.location.search);
-    const sessionId = params.get('session_id');
-    if (sessionId) {
-      fetch(`https://api.mentionwatch.com/api/welcome?session_id=${sessionId}`)
-        .then(r => r.json())
-        .then(data => {
-          if (data.api_key) document.getElementById('api-key').textContent = data.api_key;
-          if (data.webhook_secret) document.getElementById('webhook-secret').textContent = data.webhook_secret;
-          if (data.plan) document.getElementById('plan-name').textContent = data.plan;
-        })
-        .catch(() => {
-          document.getElementById('api-key').textContent = 'Error loading key — contact support';
-        });
+    function showError(msg) {
+      const el = document.getElementById('error-strip');
+      el.textContent = msg;
+      el.style.display = 'block';
     }
+
+    function setCredential(elementId, value) {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      el.textContent = value;
+    }
+
+    function setPlanInfo(plan) {
+      const badge = document.getElementById('plan-badge');
+      const name  = document.getElementById('plan-name');
+      if (!plan) return;
+
+      const label = plan.name || plan.id || plan;
+      const price = plan.amount
+        ? ' &mdash; $' + (plan.amount / 100).toFixed(0) + '/mo'
+        : '';
+
+      if (badge) badge.textContent = label;
+      if (name)  name.innerHTML = '<em>' + label + '</em>' + price;
+    }
+
+    async function loadWelcome() {
+      const sessionId = getSessionId();
+
+      if (!sessionId) {
+        showError('No session ID found. If you just completed checkout, try refreshing the page.');
+        // Still render placeholder UI so the page isn't blank
+        setCredential('api-key',        'mw_live_xxxxxxxxxxxxxxxxxxxx');
+        setCredential('webhook-secret', 'mw_whsec_xxxxxxxxxxxxxxxxxxxx');
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/api/welcome?session_id=${encodeURIComponent(sessionId)}`);
+
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          throw new Error(body.error || `Server returned ${res.status}`);
+        }
+
+        const data = await res.json();
+
+        if (data.api_key)          setCredential('api-key', data.api_key);
+        if (data.webhook_secret)   setCredential('webhook-secret', data.webhook_secret);
+        if (data.plan)             setPlanInfo(data.plan);
+
+      } catch (err) {
+        showError('Could not load your credentials: ' + err.message + '. Please contact support@mentionwatch.com.');
+      }
+    }
+
+    // ── Copy to clipboard ───────────────────────────────────────────────────
+
+    async function copyToClipboard(valueId, btnId) {
+      const value = document.getElementById(valueId)?.textContent?.trim();
+      const btn   = document.getElementById(btnId);
+      if (!value || !btn) return;
+
+      try {
+        await navigator.clipboard.writeText(value);
+        btn.textContent = 'copied';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = 'copy';
+          btn.classList.remove('copied');
+        }, 2000);
+      } catch {
+        // Fallback for older browsers
+        const ta = document.createElement('textarea');
+        ta.value = value;
+        ta.style.position = 'fixed';
+        ta.style.opacity  = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        btn.textContent = 'copied';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = 'copy';
+          btn.classList.remove('copied');
+        }, 2000);
+      }
+    }
+
+    // ── Boot ────────────────────────────────────────────────────────────────
+
+    document.addEventListener('DOMContentLoaded', loadWelcome);
   </script>
+
 </body>
 </html>
