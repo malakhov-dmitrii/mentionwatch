@@ -133,25 +133,28 @@
   <!-- How It Works -->
   <section class="px-4 sm:px-6 lg:px-8 py-20">
     <div class="max-w-5xl mx-auto">
-      <h2 class="text-2xl sm:text-3xl font-bold text-center mb-12">Three API calls. That's the setup.</h2>
-      <div class="grid md:grid-cols-3 gap-8">
-        <div class="bg-surface-900 border border-gray-800 rounded-xl p-6">
-          <div class="text-brand-400 font-mono text-sm mb-3">Step 1</div>
-          <h3 class="text-lg font-bold mb-2">Add keywords</h3>
-          <p class="text-gray-400 text-sm mb-4">Tell us what to watch for. Up to 25 keywords on Pro.</p>
-          <code class="text-xs text-gray-500 font-mono">POST /api/keywords</code>
+      <h2 class="text-2xl sm:text-3xl font-bold mb-8">Three API calls. That's the setup.</h2>
+      <div class="space-y-6 max-w-2xl">
+        <div class="flex gap-4 items-start">
+          <span class="flex-none w-8 h-8 rounded bg-brand-600/20 text-brand-400 text-sm font-mono flex items-center justify-center">1</span>
+          <div>
+            <div class="font-medium mb-1">Add keywords <code class="text-xs text-gray-500 font-mono ml-2">POST /api/keywords</code></div>
+            <p class="text-gray-400 text-sm">Tell us what to watch for. Up to 25 keywords on Pro.</p>
+          </div>
         </div>
-        <div class="bg-surface-900 border border-gray-800 rounded-xl p-6">
-          <div class="text-brand-400 font-mono text-sm mb-3">Step 2</div>
-          <h3 class="text-lg font-bold mb-2">Set your webhook</h3>
-          <p class="text-gray-400 text-sm mb-4">Point us at your endpoint. We sign every request.</p>
-          <code class="text-xs text-gray-500 font-mono">POST /api/webhooks</code>
+        <div class="flex gap-4 items-start">
+          <span class="flex-none w-8 h-8 rounded bg-brand-600/20 text-brand-400 text-sm font-mono flex items-center justify-center">2</span>
+          <div>
+            <div class="font-medium mb-1">Set your webhook <code class="text-xs text-gray-500 font-mono ml-2">POST /api/webhooks</code></div>
+            <p class="text-gray-400 text-sm">Point us at your endpoint. We sign every request.</p>
+          </div>
         </div>
-        <div class="bg-surface-900 border border-gray-800 rounded-xl p-6">
-          <div class="text-brand-400 font-mono text-sm mb-3">Step 3</div>
-          <h3 class="text-lg font-bold mb-2">Get mentions</h3>
-          <p class="text-gray-400 text-sm mb-4">We poll the sources. You get a POST for every match.</p>
-          <code class="text-xs text-gray-500 font-mono">→ POST your-app.com/hook</code>
+        <div class="flex gap-4 items-start">
+          <span class="flex-none w-8 h-8 rounded bg-brand-600/20 text-brand-400 text-sm font-mono flex items-center justify-center">3</span>
+          <div>
+            <div class="font-medium mb-1">Get mentions <code class="text-xs text-gray-500 font-mono ml-2">→ POST your-app.com/hook</code></div>
+            <p class="text-gray-400 text-sm">We poll the sources. You get a POST for every match.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -160,49 +163,40 @@
   <!-- Sources -->
   <section class="px-4 sm:px-6 lg:px-8 py-16 bg-surface-900/50">
     <div class="max-w-5xl mx-auto">
-      <h2 class="text-2xl sm:text-3xl font-bold text-center mb-4">Sources</h2>
-      <p class="text-gray-400 text-center mb-10">We monitor where developers hang out. More sources coming.</p>
-      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 max-w-3xl mx-auto">
-        <div class="bg-surface-900 border border-gray-800 rounded-lg p-4 text-center">
-          <div class="text-2xl mb-2">🟧</div>
-          <div class="font-medium text-sm">Hacker News</div>
-          <span class="inline-block mt-2 text-xs bg-green-900/50 text-green-400 px-2 py-0.5 rounded-full">Live</span>
-        </div>
-        <div class="bg-surface-900 border border-gray-800 rounded-lg p-4 text-center">
-          <div class="text-2xl mb-2">🔴</div>
-          <div class="font-medium text-sm">Reddit</div>
-          <span class="inline-block mt-2 text-xs bg-green-900/50 text-green-400 px-2 py-0.5 rounded-full">Live</span>
-        </div>
-        <div class="bg-surface-900 border border-gray-700/50 rounded-lg p-4 text-center opacity-60">
-          <div class="text-2xl mb-2">🐦</div>
-          <div class="font-medium text-sm">Twitter / X</div>
-          <span class="inline-block mt-2 text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full">Coming Soon</span>
-        </div>
-        <div class="bg-surface-900 border border-gray-700/50 rounded-lg p-4 text-center opacity-60">
-          <div class="text-2xl mb-2">💼</div>
-          <div class="font-medium text-sm">LinkedIn</div>
-          <span class="inline-block mt-2 text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full">Coming Soon</span>
-        </div>
-        <div class="bg-surface-900 border border-gray-700/50 rounded-lg p-4 text-center opacity-60">
-          <div class="text-2xl mb-2">🚀</div>
-          <div class="font-medium text-sm">Product Hunt</div>
-          <span class="inline-block mt-2 text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full">Coming Soon</span>
-        </div>
-        <div class="bg-surface-900 border border-gray-700/50 rounded-lg p-4 text-center opacity-60">
-          <div class="text-2xl mb-2">👩‍💻</div>
-          <div class="font-medium text-sm">Dev.to</div>
-          <span class="inline-block mt-2 text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full">Coming Soon</span>
-        </div>
-        <div class="bg-surface-900 border border-gray-700/50 rounded-lg p-4 text-center opacity-60">
-          <div class="text-2xl mb-2">🐙</div>
-          <div class="font-medium text-sm">GitHub</div>
-          <span class="inline-block mt-2 text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full">Coming Soon</span>
-        </div>
-        <div class="bg-surface-900 border border-gray-700/50 rounded-lg p-4 text-center opacity-60">
-          <div class="text-2xl mb-2">➕</div>
-          <div class="font-medium text-sm">Request a source</div>
-          <span class="inline-block mt-2 text-xs bg-brand-900/50 text-brand-400 px-2 py-0.5 rounded-full">Vote</span>
-        </div>
+      <h2 class="text-2xl sm:text-3xl font-bold mb-4">Sources we monitor</h2>
+      <p class="text-gray-400 mb-8 max-w-lg">Live sources deliver webhooks now. More coming based on what customers ask for.</p>
+      <div class="flex flex-wrap gap-3">
+        <span class="inline-flex items-center gap-2 bg-surface-900 border border-gray-800 px-4 py-2 rounded text-sm font-medium">
+          <span class="w-2 h-2 rounded-full bg-orange-500"></span> Hacker News
+          <span class="text-xs bg-green-900/50 text-green-400 px-1.5 py-0.5 rounded">live</span>
+        </span>
+        <span class="inline-flex items-center gap-2 bg-surface-900 border border-gray-800 px-4 py-2 rounded text-sm font-medium">
+          <span class="w-2 h-2 rounded-full bg-red-500"></span> Reddit
+          <span class="text-xs bg-green-900/50 text-green-400 px-1.5 py-0.5 rounded">live</span>
+        </span>
+        <span class="inline-flex items-center gap-2 bg-surface-900 border border-gray-700/50 px-4 py-2 rounded text-sm text-gray-500">
+          <span class="w-2 h-2 rounded-full bg-gray-600"></span> Twitter / X
+          <span class="text-xs text-gray-600">soon</span>
+        </span>
+        <span class="inline-flex items-center gap-2 bg-surface-900 border border-gray-700/50 px-4 py-2 rounded text-sm text-gray-500">
+          <span class="w-2 h-2 rounded-full bg-gray-600"></span> LinkedIn
+          <span class="text-xs text-gray-600">soon</span>
+        </span>
+        <span class="inline-flex items-center gap-2 bg-surface-900 border border-gray-700/50 px-4 py-2 rounded text-sm text-gray-500">
+          <span class="w-2 h-2 rounded-full bg-gray-600"></span> Product Hunt
+          <span class="text-xs text-gray-600">soon</span>
+        </span>
+        <span class="inline-flex items-center gap-2 bg-surface-900 border border-gray-700/50 px-4 py-2 rounded text-sm text-gray-500">
+          <span class="w-2 h-2 rounded-full bg-gray-600"></span> Dev.to
+          <span class="text-xs text-gray-600">soon</span>
+        </span>
+        <span class="inline-flex items-center gap-2 bg-surface-900 border border-gray-700/50 px-4 py-2 rounded text-sm text-gray-500">
+          <span class="w-2 h-2 rounded-full bg-gray-600"></span> GitHub
+          <span class="text-xs text-gray-600">soon</span>
+        </span>
+        <a href="mailto:hello@mentionwatch.com" class="inline-flex items-center gap-2 border border-dashed border-gray-700 px-4 py-2 rounded text-sm text-gray-500 hover:text-gray-300 hover:border-gray-500 transition">
+          + Request a source
+        </a>
       </div>
     </div>
   </section>
@@ -210,18 +204,18 @@
   <!-- Trust Strip -->
   <section class="px-4 sm:px-6 lg:px-8 py-16">
     <div class="max-w-5xl mx-auto">
-      <div class="grid sm:grid-cols-3 gap-8 text-center">
+      <div class="flex flex-wrap gap-x-12 gap-y-6">
         <div>
-          <div class="text-3xl font-bold gradient-text mb-2">HMAC-SHA256</div>
-          <p class="text-gray-400 text-sm">Every webhook is signed. Verify it's really from us.</p>
+          <div class="text-2xl font-bold text-white font-mono mb-1">HMAC-SHA256</div>
+          <p class="text-gray-400 text-sm">Every webhook is signed.</p>
         </div>
         <div>
-          <div class="text-3xl font-bold gradient-text mb-2">3x Retry</div>
-          <p class="text-gray-400 text-sm">Exponential backoff. 10s, 60s, 300s. We don't drop mentions.</p>
+          <div class="text-2xl font-bold text-white font-mono mb-1">3x retry</div>
+          <p class="text-gray-400 text-sm">Exponential backoff. 10s, 60s, 300s.</p>
         </div>
         <div>
-          <div class="text-3xl font-bold gradient-text mb-2">&lt;15 min</div>
-          <p class="text-gray-400 text-sm">From mention posted to webhook delivered. Usually faster.</p>
+          <div class="text-2xl font-bold text-white font-mono mb-1">&lt;15 min</div>
+          <p class="text-gray-400 text-sm">Mention to webhook. Usually faster.</p>
         </div>
       </div>
     </div>
