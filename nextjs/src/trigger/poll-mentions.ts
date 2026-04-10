@@ -2,7 +2,7 @@ import { schedules } from "@trigger.dev/sdk";
 import { eq, and, inArray, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { keywords, mentions, seenMentions } from "@/lib/schema";
-import { user } from "../../auth-schema";
+import { user } from "@/lib/auth-schema";
 import { searchHN, hnHitToMention } from "@/lib/hn";
 import { generateId } from "@/lib/crypto";
 import { deliverWebhook, type WebhookPayload } from "@/lib/webhook";

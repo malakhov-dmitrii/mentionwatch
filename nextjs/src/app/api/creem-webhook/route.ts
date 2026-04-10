@@ -2,7 +2,7 @@ import crypto from "crypto";
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { checkoutSessions } from "@/lib/schema";
-import { user } from "../../../../auth-schema";
+import { user } from "@/lib/auth-schema";
 import { auth } from "@/lib/auth";
 import { hmacSignRaw, generateId } from "@/lib/crypto";
 

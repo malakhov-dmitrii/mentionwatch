@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { keywords, PLAN_LIMITS, type Plan } from "@/lib/schema";
-import { user } from "../../../../auth-schema";
+import { user } from "@/lib/auth-schema";
 import { verifyApiKey, unauthorized } from "@/lib/api-auth";
 
 export async function GET(request: Request) {

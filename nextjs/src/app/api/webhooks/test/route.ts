@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { user } from "../../../../../auth-schema";
+import { user } from "@/lib/auth-schema";
 import { verifyApiKey, unauthorized } from "@/lib/api-auth";
 import { hmacSign, generateId } from "@/lib/crypto";
 

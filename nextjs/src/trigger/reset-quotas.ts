@@ -1,6 +1,6 @@
 import { schedules } from "@trigger.dev/sdk";
 import { db } from "@/lib/db";
-import { user } from "../../auth-schema";
+import { user } from "@/lib/auth-schema";
 
 export const resetQuotas = schedules.task({
   id: "reset-quotas",
