@@ -177,7 +177,7 @@ $ curl -X POST mentionwatch.mlh.one/api/keywords \\
           </p>
           <p className="mt-4 font-mono text-[12px] text-zinc-600">
             More sources based on demand.{" "}
-            <a href="mailto:hello@mentionwatch.com" className="text-amber-500 hover:text-amber-400 transition-colors no-underline">Request one &rarr;</a>
+            <a href="mailto:mitia2022@gmail.com" className="text-amber-500 hover:text-amber-400 transition-colors no-underline">Request one &rarr;</a>
           </p>
         </div>
       </section>
@@ -237,7 +237,7 @@ $ curl -X POST mentionwatch.mlh.one/api/keywords \\
                 <a href="CREEM_CHECKOUT_PRO_URL" className="block text-center h-12 leading-[48px] font-mono text-[13px] tracking-wider bg-amber-500 text-black hover:bg-amber-600 transition-colors no-underline">Start free trial</a>
               </div>
             </div>
-            <p className="mt-5 font-mono text-[12px] text-zinc-600">Need more?{" "}<a href="mailto:hello@mentionwatch.com" className="text-amber-500 hover:text-amber-400 transition-colors no-underline">hello@mentionwatch.com</a> — we do custom plans.</p>
+            <p className="mt-5 font-mono text-[12px] text-zinc-600">Need more?{" "}<a href="mailto:mitia2022@gmail.com" className="text-amber-500 hover:text-amber-400 transition-colors no-underline">mitia2022@gmail.com</a> — we do custom plans.</p>
           </div>
         </div>
       </section>
@@ -249,7 +249,7 @@ $ curl -X POST mentionwatch.mlh.one/api/keywords \\
           <Faq q="How fast are mentions delivered?">We poll continuously. Starter accounts see mentions within ~10 minutes; Pro accounts get priority polling at ~5 minutes. Most mentions arrive well under the maximum.</Faq>
           <Faq q="What happens if my webhook endpoint is down?">We retry three times with exponential backoff: 10s, 60s, then 5 minutes. After three failures the mention is stored and retrievable via <span className="font-mono text-[11px] text-amber-500 bg-amber-500/[0.07] px-1.5 py-0.5">GET /api/mentions</span> so nothing is lost.</Faq>
           <Faq q="How do I verify webhooks are from MentionWatch?">Every delivery includes an <span className="font-mono text-[11px] text-amber-500 bg-amber-500/[0.07] px-1.5 py-0.5">X-MentionWatch-Signature</span> header with an HMAC-SHA256 hash of the body. The <Link href="/docs#verification" className="text-amber-500 hover:text-amber-400 no-underline transition-colors">verification docs</Link> have copy-paste examples for Node.js and Python.</Faq>
-          <Faq q="Which sources are available today?">Hacker News is live now. Reddit, Twitter/X, LinkedIn, Product Hunt, Dev.to, and GitHub are on the roadmap. Sources are prioritized by demand — <a href="mailto:hello@mentionwatch.com" className="text-amber-500 hover:text-amber-400 no-underline transition-colors">tell us what you need</a>.</Faq>
+          <Faq q="Which sources are available today?">Hacker News is live now. Reddit, Twitter/X, LinkedIn, Product Hunt, Dev.to, and GitHub are on the roadmap. Sources are prioritized by demand — <a href="mailto:mitia2022@gmail.com" className="text-amber-500 hover:text-amber-400 no-underline transition-colors">tell us what you need</a>.</Faq>
           <Faq q="Can I cancel anytime?">Yes. Cancel through your billing portal anytime. You keep access until the end of the billing period. No questions, no retention flows.</Faq>
           <details className="border-t border-zinc-800/40 border-b">
             <summary className="flex justify-between items-center py-5 select-none">
@@ -283,7 +283,7 @@ $ curl -X POST mentionwatch.mlh.one/api/keywords \\
             <Link href="/compare" className="font-mono text-[12px] text-zinc-600 hover:text-zinc-400 transition-colors no-underline py-2">compare</Link>
             <Link href="/agent-setup" className="font-mono text-[12px] text-zinc-600 hover:text-zinc-400 transition-colors no-underline py-2">agent setup</Link>
             <Link href="/llms.txt" className="font-mono text-[12px] text-zinc-600 hover:text-zinc-400 transition-colors no-underline py-2">llms.txt</Link>
-            <a href="mailto:hello@mentionwatch.com" className="font-mono text-[12px] text-zinc-600 hover:text-zinc-400 transition-colors no-underline py-2">contact</a>
+            <a href="mailto:mitia2022@gmail.com" className="font-mono text-[12px] text-zinc-600 hover:text-zinc-400 transition-colors no-underline py-2">contact</a>
             <a href="https://twitter.com/mentionwatch" className="font-mono text-[12px] text-zinc-600 hover:text-zinc-400 transition-colors no-underline py-2">twitter</a>
           </nav>
         </div>
