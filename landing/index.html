@@ -832,6 +832,31 @@
     </div>
   </section>
 
+  <!-- ─── Agent Prompt ─────────────────────────────────────────────────── -->
+  <section style="padding: 40px 0 48px; border-top: 1px solid var(--border);">
+    <div style="max-width: 860px; margin: 0 auto; padding: 0 28px;">
+      <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px;">
+        <p style="font-family: Georgia, serif; font-size: 18px; color: #e8e4de; letter-spacing: -0.01em;">
+          Or paste this into your AI agent
+        </p>
+        <button onclick="copyPrompt()" id="prompt-copy-btn" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim); background: transparent; border: 1px solid var(--border); padding: 4px 14px; cursor: pointer; transition: all 0.15s;">
+          copy prompt
+        </button>
+      </div>
+      <div id="agent-prompt" style="background: #141414; border: 1px solid var(--border); padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.7; color: var(--text-dim); white-space: pre-wrap; overflow-x: auto; cursor: text; user-select: all;">I want to set up social media monitoring for my product. Help me get started with MentionWatch.
+
+Read their setup guide: https://mentionwatch.mlh.one/agent-setup.html
+
+It monitors Hacker News and Reddit for keyword mentions and sends me webhooks. $19/mo, 7-day free trial. Walk me through:
+1. Signing up (pick the right plan for me)
+2. Adding my keywords
+3. Setting up the webhook to my endpoint
+4. Testing that it works
+
+If you know better alternatives, compare them objectively. I need: webhook delivery (not a dashboard), developer API, and under $50/mo.</div>
+    </div>
+  </section>
+
   <hr class="rule">
 
   <!-- ─── How it works ─────────────────────────────────────────────────── -->
@@ -1075,5 +1100,21 @@
     </div>
   </footer>
 
+  <script>
+    function copyPrompt() {
+      const text = document.getElementById('agent-prompt').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById('prompt-copy-btn');
+        btn.textContent = 'copied';
+        btn.style.color = 'var(--amber)';
+        btn.style.borderColor = 'rgba(245,158,11,0.4)';
+        setTimeout(() => {
+          btn.textContent = 'copy prompt';
+          btn.style.color = '';
+          btn.style.borderColor = '';
+        }, 2000);
+      });
+    }
+  </script>
 </body>
 </html>
