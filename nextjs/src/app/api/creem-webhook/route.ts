@@ -38,7 +38,7 @@ export async function POST(request: Request) {
   }
 
   const event = JSON.parse(rawBody);
-  if (event.event_type !== "checkout.completed") {
+  if (event.eventType !== "checkout.completed") {
     return Response.json({ received: true });
   }
 

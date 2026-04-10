@@ -75,7 +75,7 @@ export default function Home() {
                 Know when anyone<br />mentions <em className="not-italic text-zinc-300">your product</em>
               </h1>
               <p className="text-[16px] text-zinc-400 leading-[1.7] mb-8 max-w-[400px]">
-                Set keywords via API. Get webhooks when they appear on Hacker&nbsp;News, Reddit, and more. No dashboard. No noise.
+                Set keywords via API. Get webhooks when they appear on Hacker&nbsp;News and more. No dashboard. No noise.
               </p>
               <div className="flex flex-wrap gap-3">
                 <a href="#pricing" className="flex items-center h-11 px-5 font-mono text-[13px] tracking-wider bg-amber-500 text-black hover:bg-amber-600 transition-colors no-underline">Start free trial</a>
@@ -94,7 +94,7 @@ export default function Home() {
                 </div>
                 <pre className="p-5 font-mono text-[12.5px] leading-[1.75] overflow-x-auto">{
 `\x23 Add a keyword
-$ curl -X POST api.mentionwatch.com/api/keywords \\
+$ curl -X POST mentionwatch.mlh.one/api/keywords \\
     -H "Authorization: Bearer mw_live_xxx" \\
     -d '{"keyword": "my-product"}'
 
@@ -168,7 +168,7 @@ $ curl -X POST api.mentionwatch.com/api/keywords \\
           <p className="font-mono text-[11px] text-zinc-600 uppercase tracking-[0.14em] mb-5">Sources we monitor</p>
           <p className="text-[18px] text-zinc-300 leading-[1.8]">
             <span className="text-zinc-100">Hacker News</span><Badge live /><span className="text-zinc-700">,&ensp;</span>
-            <span className="text-zinc-100">Reddit</span><Badge live /><span className="text-zinc-700">,&ensp;</span>
+            <span className="text-zinc-500">Reddit</span><Badge /><span className="text-zinc-700">,&ensp;</span>
             <span className="text-zinc-500">Twitter/X</span><Badge /><span className="text-zinc-700">,&ensp;</span>
             <span className="text-zinc-500">LinkedIn</span><Badge /><span className="text-zinc-700">,&ensp;</span>
             <span className="text-zinc-500">Product Hunt</span><Badge /><span className="text-zinc-700">,&ensp;</span>
@@ -231,7 +231,7 @@ $ curl -X POST api.mentionwatch.com/api/keywords \\
                   <li>All live sources</li>
                   <li>Webhook delivery</li>
                   <li>HMAC signatures</li>
-                  <li>Priority polling <span className="text-zinc-600">(~5 min vs ~10 min)</span></li>
+                  <li>Priority support + early access to new sources</li>
                   <li>Priority support</li>
                 </ul>
                 <a href="CREEM_CHECKOUT_PRO_URL" className="block text-center h-12 leading-[48px] font-mono text-[13px] tracking-wider bg-amber-500 text-black hover:bg-amber-600 transition-colors no-underline">Start free trial</a>
@@ -249,7 +249,7 @@ $ curl -X POST api.mentionwatch.com/api/keywords \\
           <Faq q="How fast are mentions delivered?">We poll continuously. Starter accounts see mentions within ~10 minutes; Pro accounts get priority polling at ~5 minutes. Most mentions arrive well under the maximum.</Faq>
           <Faq q="What happens if my webhook endpoint is down?">We retry three times with exponential backoff: 10s, 60s, then 5 minutes. After three failures the mention is stored and retrievable via <span className="font-mono text-[11px] text-amber-500 bg-amber-500/[0.07] px-1.5 py-0.5">GET /api/mentions</span> so nothing is lost.</Faq>
           <Faq q="How do I verify webhooks are from MentionWatch?">Every delivery includes an <span className="font-mono text-[11px] text-amber-500 bg-amber-500/[0.07] px-1.5 py-0.5">X-MentionWatch-Signature</span> header with an HMAC-SHA256 hash of the body. The <Link href="/docs#verification" className="text-amber-500 hover:text-amber-400 no-underline transition-colors">verification docs</Link> have copy-paste examples for Node.js and Python.</Faq>
-          <Faq q="Which sources are available today?">Hacker News and Reddit are live now. Twitter/X, LinkedIn, Product Hunt, Dev.to, and GitHub are on the roadmap. Sources are prioritized by demand — <a href="mailto:hello@mentionwatch.com" className="text-amber-500 hover:text-amber-400 no-underline transition-colors">tell us what you need</a>.</Faq>
+          <Faq q="Which sources are available today?">Hacker News is live now. Reddit, Twitter/X, LinkedIn, Product Hunt, Dev.to, and GitHub are on the roadmap. Sources are prioritized by demand — <a href="mailto:hello@mentionwatch.com" className="text-amber-500 hover:text-amber-400 no-underline transition-colors">tell us what you need</a>.</Faq>
           <Faq q="Can I cancel anytime?">Yes. Cancel through your billing portal anytime. You keep access until the end of the billing period. No questions, no retention flows.</Faq>
           <details className="border-t border-zinc-800/40 border-b">
             <summary className="flex justify-between items-center py-5 select-none">

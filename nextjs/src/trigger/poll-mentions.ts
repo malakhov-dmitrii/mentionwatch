@@ -1,5 +1,5 @@
 import { schedules } from "@trigger.dev/sdk";
-import { eq, and, inArray } from "drizzle-orm";
+import { eq, and, inArray, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { keywords, mentions, seenMentions } from "@/lib/schema";
 import { user } from "../../auth-schema";
@@ -139,6 +139,15 @@ export const pollMentions = schedules.task({
           .update(mentions)
           .set({ delivered: true, deliveredAt: new Date() })
           .where(eq(mentions.id, mention.id));
+
+        // Increment mention quota for this user
+        await db
+          .update(user)
+          .set({
+            mentionsThisMonth: sql`COALESCE(${user.mentionsThisMonth}, 0) + 1`,
+          })
+          .where(eq(user.id, mention.userId));
+
         delivered++;
       }
     }
