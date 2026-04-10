@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MentionWatch — Social Media Monitoring API for Developers</title>
+  <meta name="description" content="Monitor keyword mentions across social media via API and webhooks. Developer-first. Set up in 90 seconds. $19/mo.">
+  <meta property="og:title" content="MentionWatch — Social Media Monitoring API">
+  <meta property="og:description" content="Get webhooks when your product is mentioned on HN, Reddit, and more. Set up in 90 seconds.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>></text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwindcss.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    :root {
+      --black:      #0a0a0a;
+      --green:      #22c55e;
+      --green-dim:  #16a34a;
+      --green-glow: rgba(34,197,94,0.12);
+      --body:       #a3a3a3;
+      --dim:        #525252;
+      --bright:     #e5e5e5;
+      --cursor:     #22c55e;
+      --yellow:     #fbbf24;
+      --blue:       #60a5fa;
+      --red:        #f87171;
+      --cyan:       #34d399;
+      --white:      #d4d4d4;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--body);
+      font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ── Selection ── */
+    ::selection {
+      background: var(--green-glow);
+      color: var(--green);
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--black); }
+    ::-webkit-scrollbar-thumb { background: #262626; }
+    ::-webkit-scrollbar-thumb:hover { background: #404040; }
+
+    /* ── Layout container ── */
+    .wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── ASCII divider ── */
+    .rule {
+      color: var(--dim);
+      overflow: hidden;
+      white-space: nowrap;
+      user-select: none;
+      line-height: 1;
+      padding: 0 24px;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    /* ── Prompt elements ── */
+    .prompt-path { color: var(--blue); }
+    .prompt-branch { color: var(--green); }
+    .prompt-sym { color: var(--green); }
+    .prompt-sym-dim { color: var(--dim); }
+
+    /* ── Terminal colors ── */
+    .c-green   { color: var(--green); }
+    .c-yellow  { color: var(--yellow); }
+    .c-blue    { color: var(--blue); }
+    .c-red     { color: var(--red); }
+    .c-cyan    { color: var(--cyan); }
+    .c-dim     { color: var(--dim); }
+    .c-bright  { color: var(--bright); }
+    .c-white   { color: var(--white); }
+    .c-body    { color: var(--body); }
+
+    /* ── Blinking cursor ── */
+    .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 14px;
+      background: var(--cursor);
+      vertical-align: middle;
+      animation: blink 1.1s step-end infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+
+    /* ── Links ── */
+    a {
+      color: var(--body);
+      text-decoration: underline;
+      text-decoration-color: var(--dim);
+      text-underline-offset: 3px;
+      transition: color 0.1s, text-decoration-color 0.1s;
+    }
+    a:hover {
+      color: var(--green);
+      text-decoration-color: var(--green);
+    }
+
+    /* ── Nav ── */
+    .nav-line {
+      padding: 14px 24px;
+      max-width: 860px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .nav-prompt {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--body);
+      padding: 2px 0;
+      transition: color 0.1s;
+    }
+
+    .nav-links a:hover { color: var(--green); }
+
+    .nav-sep {
+      color: var(--dim);
+      margin: 0 8px;
+      user-select: none;
+    }
+
+    /* ── Section heading ── */
+    .sec-label {
+      color: var(--dim);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      user-select: none;
+    }
+
+    /* ── Code inline ── */
+    code {
+      color: var(--green);
+      font-family: inherit;
+    }
+
+    /* ── Checkbox list ── */
+    .cb-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .cb-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .cb-box {
+      color: var(--dim);
+      flex-shrink: 0;
+    }
+
+    .cb-box.checked { color: var(--green); }
+
+    .cb-label {
+      color: var(--body);
+    }
+
+    .cb-label.checked {
+      color: var(--bright);
+    }
+
+    .cb-tag {
+      margin-left: auto;
+      font-size: 12px;
+      padding: 1px 8px;
+      border: 1px solid;
+    }
+
+    .cb-tag-live {
+      color: var(--green);
+      border-color: rgba(34,197,94,0.3);
+    }
+
+    .cb-tag-soon {
+      color: var(--dim);
+      border-color: #2a2a2a;
+    }
+
+    /* ── Pricing table ── */
+    .price-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .price-table th {
+      text-align: left;
+      padding: 6px 16px 6px 0;
+      color: var(--dim);
+      font-weight: 400;
+      white-space: nowrap;
+      vertical-align: top;
+    }
+
+    .price-table th:first-child { padding-left: 0; }
+
+    .price-table td {
+      padding: 6px 16px 6px 0;
+      color: var(--body);
+      vertical-align: top;
+      white-space: nowrap;
+    }
+
+    .price-table td:first-child {
+      padding-left: 0;
+      color: var(--dim);
+      min-width: 180px;
+    }
+
+    .price-table .col-starter { color: var(--white); }
+    .price-table .col-pro     { color: var(--green); }
+
+    .price-table .head-row th {
+      padding-top: 0;
+      padding-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .price-table .head-row .col-starter,
+    .price-table .head-row .col-pro {
+      font-size: 22px;
+      font-weight: 500;
+    }
+
+    .price-table .separator td,
+    .price-table .separator th {
+      padding-top: 2px;
+      padding-bottom: 2px;
+      color: var(--dim);
+      font-size: 12px;
+    }
+
+    /* ── Man page style ── */
+    .man-section {
+      color: var(--bright);
+      font-weight: 700;
+      margin-top: 28px;
+      margin-bottom: 10px;
+      letter-spacing: 0.04em;
+    }
+
+    .man-entry dt {
+      color: var(--white);
+      margin-top: 16px;
+      margin-bottom: 4px;
+      padding-left: 8px;
+    }
+
+    .man-entry dd {
+      color: var(--body);
+      padding-left: 24px;
+      line-height: 1.65;
+    }
+
+    .man-entry dd code { font-family: inherit; }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-block;
+      font-family: inherit;
+      font-size: 14px;
+      cursor: pointer;
+      text-decoration: none;
+      border: 1px solid;
+      padding: 8px 20px;
+      transition: background 0.1s, color 0.1s, border-color 0.1s;
+      white-space: nowrap;
+    }
+
+    .btn-green {
+      color: var(--black);
+      background: var(--green);
+      border-color: var(--green);
+    }
+    .btn-green:hover {
+      background: #16a34a;
+      border-color: #16a34a;
+      color: var(--black);
+      text-decoration: none;
+    }
+
+    .btn-ghost {
+      color: var(--body);
+      background: transparent;
+      border-color: #2a2a2a;
+    }
+    .btn-ghost:hover {
+      color: var(--bright);
+      border-color: var(--dim);
+      text-decoration: none;
+    }
+
+    /* ── Fade in ── */
+    @keyframes termIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .ti   { animation: termIn 0.4s ease-out both; }
+    .ti-1 { animation: termIn 0.4s ease-out 0.05s both; }
+    .ti-2 { animation: termIn 0.4s ease-out 0.15s both; }
+    .ti-3 { animation: termIn 0.4s ease-out 0.25s both; }
+    .ti-4 { animation: termIn 0.4s ease-out 0.35s both; }
+    .ti-5 { animation: termIn 0.4s ease-out 0.45s both; }
+    .ti-6 { animation: termIn 0.4s ease-out 0.55s both; }
+
+    /* ── Trust row ── */
+    .trust-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+    }
+
+    .trust-item {
+      padding: 20px 0;
+    }
+
+    .trust-val {
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--bright);
+      margin-bottom: 4px;
+    }
+
+    .trust-desc {
+      font-size: 12px;
+      color: var(--dim);
+      line-height: 1.5;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      body { font-size: 13px; }
+      .trust-row { grid-template-columns: 1fr; }
+      .price-table { font-size: 12px; }
+      .price-table td:first-child { min-width: 120px; }
+      .hero-session { font-size: 12px; }
+      .nav-links { display: none; }
+      .nav-links.show { display: flex; }
+    }
+  </style>
+  <script defer data-domain="mentionwatch.com" src="https://plausible.io/js/script.js"></script>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- NAV                                                                     -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+
+<div style="border-bottom: 1px solid #1a1a1a;">
+  <div class="nav-line">
+    <!-- Left: shell prompt -->
+    <div class="nav-prompt">
+      <span class="prompt-path">~/mentionwatch</span>
+      <span class="c-dim">&nbsp;</span>
+      <span class="prompt-sym">$</span>
+      <span class="c-dim">&nbsp;</span>
+      <span class="cursor"></span>
+    </div>
+    <!-- Right: nav links as shell commands -->
+    <nav class="nav-links" aria-label="main navigation">
+      <a href="#pricing">cd pricing</a>
+      <span class="nav-sep">·</span>
+      <a href="/docs.html">cat docs</a>
+      <span class="nav-sep">·</span>
+      <a href="#pricing" class="c-green" style="text-decoration: none; color: var(--green); font-weight: 500;">signup</a>
+    </nav>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- HERO — one long terminal session                                        -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+
+<section class="wrap" style="padding-top: 48px; padding-bottom: 0;">
+  <div class="ti hero-session" style="line-height: 1.65;">
+
+    <!-- session preamble -->
+    <div style="margin-bottom: 20px;">
+      <div><span class="c-dim">Last login: Thu Apr 10 09:14:22 on ttys001</span></div>
+      <div style="margin-top: 4px;">
+        <span class="prompt-path">~/mentionwatch</span>
+        <span class="c-dim">&nbsp;on&nbsp;</span>
+        <span class="c-green">git:(main)</span>
+        <span class="c-dim">&nbsp;</span>
+        <span class="prompt-sym">$</span>
+        <span>&nbsp;</span>
+        <span class="c-bright">cat README.md</span>
+      </div>
+    </div>
+
+    <!-- the README content = the pitch -->
+    <div style="margin-bottom: 4px;">
+      <span class="c-dim"># </span><span class="c-bright" style="font-size: 22px; font-weight: 700; letter-spacing: -0.02em;">MentionWatch</span>
+    </div>
+    <div style="margin-bottom: 16px; color: var(--body); max-width: 580px;">
+      Developer API for social media keyword monitoring via webhooks.<br>
+      Know within <code>&lt;15 min</code> when anyone mentions your product on HN, Reddit, and more.
+    </div>
+
+    <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 4px;">
+      <span><span class="c-dim">Version:&nbsp;</span><span class="c-yellow">1.0.0</span></span>
+      <span><span class="c-dim">License:&nbsp;</span><span class="c-cyan">MIT</span></span>
+      <span><span class="c-dim">Pricing:&nbsp;</span><span class="c-green">from $19/mo</span></span>
+    </div>
+
+  </div>
+</section>
+
+<!-- ASCII rule -->
+<div class="wrap" style="padding: 24px 24px 0;">
+  <div style="color: var(--dim); overflow: hidden; white-space: nowrap; user-select: none;">────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- TERMINAL SESSION — full API flow demo                                   -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+
+<section class="wrap ti-1" style="padding-top: 32px; padding-bottom: 0;">
+
+  <!-- Step 1: create keyword -->
+  <div style="margin-bottom: 6px;">
+    <span class="prompt-path">~/mentionwatch</span>
+    <span class="c-dim">&nbsp;</span>
+    <span class="prompt-sym">$</span>
+    <span class="c-bright">&nbsp;# Step 1 — add a keyword to watch</span>
+  </div>
+  <div style="margin-bottom: 2px;">
+    <span class="prompt-path">~/mentionwatch</span>
+    <span class="c-dim">&nbsp;</span>
+    <span class="prompt-sym">$</span>
+    <span>&nbsp;</span>
+    <span class="c-bright">curl</span>
+    <span class="c-body">&nbsp;-X POST https://api.mentionwatch.com/api/keywords \</span>
+  </div>
+  <div style="padding-left: 20px; color: var(--body); margin-bottom: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;-H <span class="c-yellow">"Authorization: Bearer mw_live_k_xxxxxxxxxxxx"</span> \</div>
+  <div style="padding-left: 20px; color: var(--body); margin-bottom: 12px;">&nbsp;&nbsp;&nbsp;&nbsp;-d <span class="c-green">'{"keyword":"my-saas"}'</span></div>
+
+  <div style="margin-bottom: 20px; padding-left: 0; color: var(--body);">
+    <span class="c-dim">{</span><br>
+    &nbsp;&nbsp;<span class="c-blue">"id"</span><span class="c-dim">:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c-yellow">"kw_a1b2c3d4"</span><span class="c-dim">,</span><br>
+    &nbsp;&nbsp;<span class="c-blue">"keyword"</span><span class="c-dim">:&nbsp;</span><span class="c-yellow">"my-saas"</span><span class="c-dim">,</span><br>
+    &nbsp;&nbsp;<span class="c-blue">"status"</span><span class="c-dim">:&nbsp;&nbsp;</span><span class="c-green">"active"</span><span class="c-dim">,</span><br>
+    &nbsp;&nbsp;<span class="c-blue">"created"</span><span class="c-dim">:</span><span class="c-yellow">&nbsp;"2026-04-10T09:15:02Z"</span><br>
+    <span class="c-dim">}</span>
+  </div>
+
+  <!-- Step 2: set webhook -->
+  <div style="margin-bottom: 6px;">
+    <span class="prompt-path">~/mentionwatch</span>
+    <span class="c-dim">&nbsp;</span>
+    <span class="prompt-sym">$</span>
+    <span class="c-bright">&nbsp;# Step 2 — set your webhook endpoint</span>
+  </div>
+  <div style="margin-bottom: 2px;">
+    <span class="prompt-path">~/mentionwatch</span>
+    <span class="c-dim">&nbsp;</span>
+    <span class="prompt-sym">$</span>
+    <span>&nbsp;</span>
+    <span class="c-bright">curl</span>
+    <span class="c-body">&nbsp;-X POST https://api.mentionwatch.com/api/webhooks \</span>
+  </div>
+  <div style="padding-left: 20px; color: var(--body); margin-bottom: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;-H <span class="c-yellow">"Authorization: Bearer mw_live_k_xxxxxxxxxxxx"</span> \</div>
+  <div style="padding-left: 20px; color: var(--body); margin-bottom: 12px;">&nbsp;&nbsp;&nbsp;&nbsp;-d <span class="c-green">'{"url":"https://your-app.com/hooks/mentions"}'</span></div>
+
+  <div style="margin-bottom: 20px; color: var(--body);">
+    <span class="c-dim">{</span><br>
+    &nbsp;&nbsp;<span class="c-blue">"id"</span><span class="c-dim">:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c-yellow">"wh_x9y8z7w6"</span><span class="c-dim">,</span><br>
+    &nbsp;&nbsp;<span class="c-blue">"url"</span><span class="c-dim">:&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c-yellow">"https://your-app.com/hooks/mentions"</span><span class="c-dim">,</span><br>
+    &nbsp;&nbsp;<span class="c-blue">"secret"</span><span class="c-dim">:</span><span class="c-yellow">&nbsp;"whsec_••••••••••••••••"</span><span class="c-dim">,</span><br>
+    &nbsp;&nbsp;<span class="c-blue">"status"</span><span class="c-dim">:</span><span class="c-green">&nbsp;"active"</span><br>
+    <span class="c-dim">}</span>
+  </div>
+
+  <!-- Step 3: incoming webhook -->
+  <div style="margin-bottom: 6px;">
+    <span class="prompt-path">~/mentionwatch</span>
+    <span class="c-dim">&nbsp;</span>
+    <span class="prompt-sym">$</span>
+    <span class="c-bright">&nbsp;# Step 3 — MentionWatch finds a mention, your endpoint receives:</span>
+  </div>
+
+  <div style="margin-bottom: 6px; color: var(--dim);">
+    <span>POST https://your-app.com/hooks/mentions</span>
+    <span style="margin-left: 12px; color: var(--green);">200 OK</span>
+    <span style="margin-left: 12px; color: var(--dim);">delivery_time: 4m32s</span>
+  </div>
+
+  <div style="margin-bottom: 20px; color: var(--body);">
+    <span class="c-dim">{</span><br>
+    &nbsp;&nbsp;<span class="c-blue">"event"</span><span class="c-dim">:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c-green">"mention.found"</span><span class="c-dim">,</span><br>
+    &nbsp;&nbsp;<span class="c-blue">"keyword"</span><span class="c-dim">:&nbsp;&nbsp;&nbsp;</span><span class="c-yellow">"my-saas"</span><span class="c-dim">,</span><br>
+    &nbsp;&nbsp;<span class="c-blue">"source"</span><span class="c-dim">:&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c-yellow">"hackernews"</span><span class="c-dim">,</span><br>
+    &nbsp;&nbsp;<span class="c-blue">"title"</span><span class="c-dim">:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c-yellow">"Ask HN: What's everyone using for uptime monitoring?"</span><span class="c-dim">,</span><br>
+    &nbsp;&nbsp;<span class="c-blue">"url"</span><span class="c-dim">:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c-yellow">"https://news.ycombinator.com/item?id=43821044"</span><span class="c-dim">,</span><br>
+    &nbsp;&nbsp;<span class="c-blue">"author"</span><span class="c-dim">:&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c-yellow">"thrower99"</span><span class="c-dim">,</span><br>
+    &nbsp;&nbsp;<span class="c-blue">"score"</span><span class="c-dim">:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c-cyan">147</span><span class="c-dim">,</span><br>
+    &nbsp;&nbsp;<span class="c-blue">"timestamp"</span><span class="c-dim">:</span><span class="c-yellow">&nbsp;"2026-04-10T08:47:11Z"</span><br>
+    <span class="c-dim">}</span>
+  </div>
+
+  <!-- verify signature snippet -->
+  <div style="margin-bottom: 6px;">
+    <span class="prompt-path">~/mentionwatch</span>
+    <span class="c-dim">&nbsp;</span>
+    <span class="prompt-sym">$</span>
+    <span class="c-bright">&nbsp;# Verify the signature in your handler</span>
+  </div>
+
+  <div style="margin-bottom: 32px; color: var(--body); padding-left: 0;">
+    <span class="c-dim">// Node.js</span><br>
+    <span class="c-cyan">const</span>&nbsp;<span class="c-white">sig</span>&nbsp;<span class="c-dim">=</span>&nbsp;<span class="c-yellow">req.headers</span><span class="c-dim">[</span><span class="c-green">'x-mentionwatch-signature'</span><span class="c-dim">];</span><br>
+    <span class="c-cyan">const</span>&nbsp;<span class="c-white">expected</span>&nbsp;<span class="c-dim">=</span>&nbsp;<span class="c-yellow">crypto</span><br>
+    &nbsp;&nbsp;<span class="c-dim">.</span><span class="c-cyan">createHmac</span><span class="c-dim">(</span><span class="c-green">'sha256'</span><span class="c-dim">,</span>&nbsp;<span class="c-yellow">process.env.WEBHOOK_SECRET</span><span class="c-dim">)</span><br>
+    &nbsp;&nbsp;<span class="c-dim">.</span><span class="c-cyan">update</span><span class="c-dim">(</span><span class="c-yellow">rawBody</span><span class="c-dim">)</span><br>
+    &nbsp;&nbsp;<span class="c-dim">.</span><span class="c-cyan">digest</span><span class="c-dim">(</span><span class="c-green">'hex'</span><span class="c-dim">);</span><br>
+    <span class="c-cyan">if</span>&nbsp;<span class="c-dim">(</span><span class="c-white">sig</span>&nbsp;<span class="c-dim">!==</span>&nbsp;<span class="c-white">expected</span><span class="c-dim">)</span>&nbsp;<span class="c-red">throw</span>&nbsp;<span class="c-cyan">new</span>&nbsp;<span class="c-white">Error</span><span class="c-dim">(</span><span class="c-green">'invalid signature'</span><span class="c-dim">);</span>
+  </div>
+
+</section>
+
+<!-- ASCII rule -->
+<div class="wrap" style="padding: 0 24px;">
+  <div style="color: var(--dim); overflow: hidden; white-space: nowrap; user-select: none;">────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- TRUST                                                                   -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+
+<section class="wrap ti-2" style="padding-top: 28px; padding-bottom: 0;">
+  <div class="sec-label"># reliability guarantees</div>
+  <div class="trust-row">
+    <div class="trust-item">
+      <div class="trust-val">HMAC-SHA256</div>
+      <div class="trust-desc">Every webhook is signed.<br>Verify with your secret.</div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-val">3x retry</div>
+      <div class="trust-desc">Exponential backoff.<br>10s → 60s → 300s.</div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-val">&lt;15 min</div>
+      <div class="trust-desc">Mention to webhook.<br>Usually 2-8 minutes.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ASCII rule -->
+<div class="wrap" style="padding: 16px 24px 0;">
+  <div style="color: var(--dim); overflow: hidden; white-space: nowrap; user-select: none;">────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- SOURCES                                                                 -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+
+<section class="wrap ti-3" style="padding-top: 28px; padding-bottom: 0;">
+  <div class="sec-label"># sources --list-available</div>
+  <div class="cb-list">
+    <div class="cb-item">
+      <span class="cb-box checked">[x]</span>
+      <span class="cb-label checked">Hacker News</span>
+      <span class="cb-tag cb-tag-live">live</span>
+    </div>
+    <div class="cb-item">
+      <span class="cb-box checked">[x]</span>
+      <span class="cb-label checked">Reddit</span>
+      <span class="cb-tag cb-tag-live">live</span>
+    </div>
+    <div class="cb-item">
+      <span class="cb-box c-dim">[ ]</span>
+      <span class="cb-label c-dim">Twitter/X</span>
+      <span class="cb-tag cb-tag-soon">soon</span>
+    </div>
+    <div class="cb-item">
+      <span class="cb-box c-dim">[ ]</span>
+      <span class="cb-label c-dim">LinkedIn</span>
+      <span class="cb-tag cb-tag-soon">soon</span>
+    </div>
+    <div class="cb-item">
+      <span class="cb-box c-dim">[ ]</span>
+      <span class="cb-label c-dim">Product Hunt</span>
+      <span class="cb-tag cb-tag-soon">soon</span>
+    </div>
+    <div class="cb-item">
+      <span class="cb-box c-dim">[ ]</span>
+      <span class="cb-label c-dim">Dev.to</span>
+      <span class="cb-tag cb-tag-soon">soon</span>
+    </div>
+    <div class="cb-item">
+      <span class="cb-box c-dim">[ ]</span>
+      <span class="cb-label c-dim">GitHub</span>
+      <span class="cb-tag cb-tag-soon">soon</span>
+    </div>
+    <div class="cb-item" style="margin-top: 4px;">
+      <span class="cb-box c-dim">[+]</span>
+      <a href="mailto:hello@mentionwatch.com" style="color: var(--dim); font-size: 13px;">Request a source &rarr; hello@mentionwatch.com</a>
+    </div>
+  </div>
+</section>
+
+<!-- ASCII rule -->
+<div class="wrap" style="padding: 28px 24px 0;">
+  <div style="color: var(--dim); overflow: hidden; white-space: nowrap; user-select: none;">────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- PRICING                                                                 -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+
+<section id="pricing" class="wrap ti-4" style="padding-top: 28px; padding-bottom: 0;">
+  <div class="sec-label"># pricing --compare</div>
+
+  <div style="margin-bottom: 12px; color: var(--dim); font-size: 12px;">
+    Competitors charge $41–800/mo for dashboards you'll never use. We charge for the API.
+  </div>
+
+  <div style="overflow-x: auto;">
+    <table class="price-table">
+      <thead>
+        <tr class="head-row">
+          <th></th>
+          <th class="col-starter">starter</th>
+          <th class="col-pro">pro</th>
+        </tr>
+        <tr>
+          <th></th>
+          <th class="col-starter" style="font-size: 13px; font-weight: 400; color: var(--dim); padding-bottom: 16px;">$19<span style="font-size: 11px;">/mo</span></th>
+          <th class="col-pro" style="font-size: 13px; font-weight: 400; color: var(--green-dim); padding-bottom: 16px;">$49<span style="font-size: 11px;">/mo</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>keywords</td>
+          <td class="col-starter">5</td>
+          <td class="col-pro">25</td>
+        </tr>
+        <tr>
+          <td>mentions/mo</td>
+          <td class="col-starter">5,000</td>
+          <td class="col-pro">50,000</td>
+        </tr>
+        <tr>
+          <td>sources</td>
+          <td class="col-starter">all live</td>
+          <td class="col-pro">all live</td>
+        </tr>
+        <tr>
+          <td>webhook delivery</td>
+          <td class="col-starter"><span class="c-green">yes</span></td>
+          <td class="col-pro"><span class="c-green">yes</span></td>
+        </tr>
+        <tr>
+          <td>HMAC signatures</td>
+          <td class="col-starter"><span class="c-green">yes</span></td>
+          <td class="col-pro"><span class="c-green">yes</span></td>
+        </tr>
+        <tr>
+          <td>retry policy</td>
+          <td class="col-starter"><span class="c-green">3x</span></td>
+          <td class="col-pro"><span class="c-green">3x</span></td>
+        </tr>
+        <tr>
+          <td>polling priority</td>
+          <td class="col-starter"><span class="c-dim">standard</span></td>
+          <td class="col-pro"><span class="c-green">priority</span></td>
+        </tr>
+        <tr>
+          <td>support</td>
+          <td class="col-starter">email</td>
+          <td class="col-pro"><span class="c-green">priority email</span></td>
+        </tr>
+        <tr>
+          <td>free trial</td>
+          <td class="col-starter">7 days</td>
+          <td class="col-pro">7 days</td>
+        </tr>
+        <tr style="height: 16px;"><td></td><td></td><td></td></tr>
+        <tr>
+          <td></td>
+          <td>
+            <a href="STRIPE_CHECKOUT_STARTER_URL" class="btn btn-ghost" style="font-size: 13px; padding: 6px 16px;">
+              ./start --plan=starter
+            </a>
+          </td>
+          <td>
+            <a href="STRIPE_CHECKOUT_PRO_URL" class="btn btn-green" style="font-size: 13px; padding: 6px 16px;">
+              ./start --plan=pro
+            </a>
+          </td>
+        </tr>
+        <tr style="height: 8px;"><td></td><td></td><td></td></tr>
+        <tr>
+          <td></td>
+          <td colspan="2" style="color: var(--dim); font-size: 12px; white-space: normal;">
+            No credit card for trial &nbsp;·&nbsp; Cancel anytime from Stripe billing portal &nbsp;·&nbsp;
+            <a href="mailto:hello@mentionwatch.com" style="color: var(--dim);">Enterprise?</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</section>
+
+<!-- ASCII rule -->
+<div class="wrap" style="padding: 28px 24px 0;">
+  <div style="color: var(--dim); overflow: hidden; white-space: nowrap; user-select: none;">────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- FAQ — man page style                                                    -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+
+<section class="wrap ti-5" style="padding-top: 28px; padding-bottom: 0;">
+
+  <!-- man page header -->
+  <div style="display: flex; justify-content: space-between; color: var(--dim); font-size: 12px; margin-bottom: 16px; flex-wrap: wrap; gap: 4px;">
+    <span>MENTIONWATCH(1)</span>
+    <span>MentionWatch Manual</span>
+    <span>MENTIONWATCH(1)</span>
+  </div>
+
+  <div class="man-section">NAME</div>
+  <div style="padding-left: 24px; color: var(--body); margin-bottom: 4px;">
+    mentionwatch &mdash; social media keyword monitoring API
+  </div>
+
+  <div class="man-section">FREQUENTLY ASKED QUESTIONS</div>
+
+  <dl class="man-entry">
+
+    <dt>How fast are mentions delivered?</dt>
+    <dd>
+      We poll sources every 5&ndash;10 minutes. Most mentions arrive within 15 minutes of
+      being posted. Priority plan customers get faster polling intervals.
+    </dd>
+
+    <dt>What happens if my webhook endpoint is down?</dt>
+    <dd>
+      We retry 3 times with exponential backoff: 10s, 60s, 5 min. Failed deliveries are
+      stored and retrievable via <code>GET /api/mentions</code> so nothing is lost.
+    </dd>
+
+    <dt>How do I verify webhooks are from MentionWatch?</dt>
+    <dd>
+      Every delivery includes an <code>X-MentionWatch-Signature</code> header containing an
+      HMAC-SHA256 of the request body signed with your webhook secret. Node.js and Python
+      examples are in the <a href="/docs.html#verification">verification docs</a>.
+    </dd>
+
+    <dt>Which sources are currently live?</dt>
+    <dd>
+      Hacker News and Reddit are live. Twitter/X, LinkedIn, Product Hunt, Dev.to,
+      and GitHub are in progress. Vote for sources at
+      <a href="mailto:hello@mentionwatch.com">hello@mentionwatch.com</a>.
+    </dd>
+
+    <dt>Can I cancel anytime?</dt>
+    <dd>
+      Yes. Cancel from your Stripe billing portal. No cancellation fee. You keep
+      access until the end of the billing period.
+    </dd>
+
+    <dt>Why is this cheaper than Mention.com or Brand24?</dt>
+    <dd>
+      We build an API, not a dashboard product. No UI team, no analytics infrastructure,
+      no enterprise sales layer. Less overhead means lower price. You write the UI if
+      you want one.
+    </dd>
+
+  </dl>
+
+  <!-- man page footer -->
+  <div style="display: flex; justify-content: space-between; color: var(--dim); font-size: 12px; margin-top: 32px; flex-wrap: wrap; gap: 4px;">
+    <span>April 2026</span>
+    <span>mentionwatch.com</span>
+    <span>MENTIONWATCH(1)</span>
+  </div>
+
+</section>
+
+<!-- ASCII rule -->
+<div class="wrap" style="padding: 28px 24px 0;">
+  <div style="color: var(--dim); overflow: hidden; white-space: nowrap; user-select: none;">────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────</div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- CTA                                                                     -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+
+<section class="wrap ti-6" style="padding-top: 36px; padding-bottom: 0;">
+  <div style="margin-bottom: 6px;">
+    <span class="prompt-path">~/mentionwatch</span>
+    <span class="c-dim">&nbsp;</span>
+    <span class="prompt-sym">$</span>
+    <span class="c-bright">&nbsp;# Start monitoring in 90 seconds</span>
+  </div>
+  <div style="margin-bottom: 6px;">
+    <span class="prompt-path">~/mentionwatch</span>
+    <span class="c-dim">&nbsp;</span>
+    <span class="prompt-sym">$</span>
+    <span class="c-dim">&nbsp;npm install mentionwatch-cli &amp;&amp; mw auth login</span>
+  </div>
+  <div style="margin-bottom: 6px; color: var(--body);">
+    <span class="c-dim">Authenticating... </span><span class="c-green">done</span>
+  </div>
+  <div style="margin-bottom: 6px; color: var(--body);">
+    <span class="c-dim">API key: </span><span class="c-yellow">mw_live_k_xxxxxxxxxxxx</span>
+    <span style="margin-left: 12px; color: var(--dim); font-size: 12px;">copied to clipboard</span>
+  </div>
+  <div style="margin-bottom: 28px;">
+    <span class="prompt-path">~/mentionwatch</span>
+    <span class="c-dim">&nbsp;</span>
+    <span class="prompt-sym">$</span>
+    <span>&nbsp;</span>
+    <span class="cursor"></span>
+  </div>
+
+  <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px;">
+    <a href="STRIPE_CHECKOUT_STARTER_URL" class="btn btn-ghost">./start --plan=starter &nbsp;($19/mo)</a>
+    <a href="STRIPE_CHECKOUT_PRO_URL" class="btn btn-green">./start --plan=pro &nbsp;&nbsp;&nbsp;&nbsp;($49/mo)</a>
+  </div>
+
+  <div style="color: var(--dim); font-size: 12px;">7-day free trial &nbsp;·&nbsp; No credit card required</div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- FOOTER                                                                  -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+
+<footer style="margin-top: 48px; border-top: 1px solid #1a1a1a;">
+  <div class="wrap" style="padding-top: 20px; padding-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+    <span style="color: var(--dim); font-size: 13px;">
+      <span class="c-green">mentionwatch</span>
+      <span class="c-dim">&nbsp;&copy; 2026</span>
+    </span>
+    <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+      <a href="/docs.html" style="font-size: 13px; color: var(--dim);">API Docs</a>
+      <a href="mailto:hello@mentionwatch.com" style="font-size: 13px; color: var(--dim);">hello@mentionwatch.com</a>
+      <a href="https://twitter.com/mentionwatch" style="font-size: 13px; color: var(--dim);">Twitter</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
