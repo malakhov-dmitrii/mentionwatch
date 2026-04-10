@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to MentionWatch</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwindcss.config = {
+      theme: { extend: { colors: {
+        brand: { 400: '#38bdf8', 500: '#0ea5e9', 600: '#0284c7' },
+        surface: { 900: '#0f172a', 950: '#020617' }
+      }}}
+    }
+  </script>
+  <style>.code-block { background: #0f172a; }</style>
+</head>
+<body class="bg-surface-950 text-gray-100 antialiased min-h-screen flex items-center justify-center px-4">
+  <div class="max-w-2xl w-full">
+    <div class="text-center mb-10">
+      <div class="text-5xl mb-4">🎉</div>
+      <h1 class="text-3xl font-bold mb-2">Welcome to MentionWatch</h1>
+      <p class="text-gray-400">Your account is ready. Here's everything you need to get started.</p>
+    </div>
+
+    <!-- API Key -->
+    <div class="bg-surface-900 border border-gray-800 rounded-xl p-6 mb-6">
+      <h2 class="text-sm font-medium text-gray-400 mb-2">Your API Key</h2>
+      <div class="flex items-center gap-3">
+        <code id="api-key" class="flex-1 bg-gray-800 px-4 py-3 rounded-lg font-mono text-sm text-brand-400 select-all">mw_live_loading...</code>
+        <button onclick="copyKey()" id="copy-btn" class="bg-gray-800 hover:bg-gray-700 px-4 py-3 rounded-lg text-sm font-medium transition">
+          Copy
+        </button>
+      </div>
+      <p class="text-xs text-gray-500 mt-2">Keep this secret. It's shown only once. Store it in your environment variables.</p>
+    </div>
+
+    <!-- Webhook Secret -->
+    <div class="bg-surface-900 border border-gray-800 rounded-xl p-6 mb-6">
+      <h2 class="text-sm font-medium text-gray-400 mb-2">Webhook Signing Secret</h2>
+      <div class="flex items-center gap-3">
+        <code id="webhook-secret" class="flex-1 bg-gray-800 px-4 py-3 rounded-lg font-mono text-sm text-green-400 select-all">mw_whsec_loading...</code>
+        <button onclick="copySecret()" id="copy-secret-btn" class="bg-gray-800 hover:bg-gray-700 px-4 py-3 rounded-lg text-sm font-medium transition">
+          Copy
+        </button>
+      </div>
+      <p class="text-xs text-gray-500 mt-2">Use this to verify webhook signatures. See <a href="/docs.html#verification" class="text-brand-400 hover:underline">verification docs</a>.</p>
+    </div>
+
+    <!-- Quick Start -->
+    <div class="bg-surface-900 border border-gray-800 rounded-xl p-6 mb-6">
+      <h2 class="text-lg font-bold mb-4">Quick Start (90 seconds)</h2>
+      <div class="space-y-4">
+        <div>
+          <div class="text-xs text-brand-400 font-mono mb-1">Step 1: Add a keyword</div>
+          <div class="code-block rounded-lg p-3 border border-gray-800">
+            <pre class="text-sm overflow-x-auto"><code>curl -X POST https://api.mentionwatch.com/api/keywords \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"keyword": "my-product"}'</code></pre>
+          </div>
+        </div>
+        <div>
+          <div class="text-xs text-brand-400 font-mono mb-1">Step 2: Set your webhook URL</div>
+          <div class="code-block rounded-lg p-3 border border-gray-800">
+            <pre class="text-sm overflow-x-auto"><code>curl -X POST https://api.mentionwatch.com/api/webhooks \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://your-app.com/webhook"}'</code></pre>
+          </div>
+        </div>
+        <div>
+          <div class="text-xs text-brand-400 font-mono mb-1">Step 3: Send a test webhook</div>
+          <div class="code-block rounded-lg p-3 border border-gray-800">
+            <pre class="text-sm overflow-x-auto"><code>curl -X POST https://api.mentionwatch.com/api/webhooks/test \
+  -H "Authorization: Bearer YOUR_API_KEY"</code></pre>
+          </div>
+          <p class="text-xs text-gray-500 mt-1">This sends a sample payload to your webhook URL immediately.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Plan Info -->
+    <div class="bg-surface-900 border border-gray-800 rounded-xl p-6 mb-6">
+      <h2 class="text-sm font-medium text-gray-400 mb-2">Your Plan</h2>
+      <div class="flex justify-between items-center">
+        <div>
+          <span id="plan-name" class="text-lg font-bold">Loading...</span>
+          <span class="text-gray-500 text-sm ml-2">7-day free trial</span>
+        </div>
+        <a href="STRIPE_BILLING_PORTAL_URL" class="text-sm text-gray-400 hover:text-white transition">Manage billing →</a>
+      </div>
+    </div>
+
+    <!-- Next Steps -->
+    <div class="text-center text-gray-500 text-sm">
+      <p>Need help? <a href="/docs.html" class="text-brand-400 hover:underline">Read the docs</a> or email <a href="mailto:hello@mentionwatch.com" class="text-brand-400 hover:underline">hello@mentionwatch.com</a></p>
+    </div>
+  </div>
+
+  <script>
+    function copyKey() {
+      navigator.clipboard.writeText(document.getElementById('api-key').textContent);
+      document.getElementById('copy-btn').textContent = 'Copied!';
+      setTimeout(() => document.getElementById('copy-btn').textContent = 'Copy', 2000);
+    }
+    function copySecret() {
+      navigator.clipboard.writeText(document.getElementById('webhook-secret').textContent);
+      document.getElementById('copy-secret-btn').textContent = 'Copied!';
+      setTimeout(() => document.getElementById('copy-secret-btn').textContent = 'Copy', 2000);
+    }
+
+    // Parse URL params from Stripe redirect
+    const params = new URLSearchParams(window.location.search);
+    const sessionId = params.get('session_id');
+    if (sessionId) {
+      fetch(`https://api.mentionwatch.com/api/welcome?session_id=${sessionId}`)
+        .then(r => r.json())
+        .then(data => {
+          if (data.api_key) document.getElementById('api-key').textContent = data.api_key;
+          if (data.webhook_secret) document.getElementById('webhook-secret').textContent = data.webhook_secret;
+          if (data.plan) document.getElementById('plan-name').textContent = data.plan;
+        })
+        .catch(() => {
+          document.getElementById('api-key').textContent = 'Error loading key — contact support';
+        });
+    }
+  </script>
+</body>
+</html>
