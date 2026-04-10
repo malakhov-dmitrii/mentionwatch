@@ -4,361 +4,708 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MentionWatch — Social Media Monitoring API for Developers</title>
-  <meta name="description" content="Monitor keyword mentions across social media via API and webhooks. Developer-first. $19/mo.">
+  <meta name="description" content="Monitor keyword mentions across social media via API and webhooks. Developer-first. Set up in 90 seconds. $19/mo.">
   <meta property="og:title" content="MentionWatch — Social Media Monitoring API">
   <meta property="og:description" content="Get webhooks when your product is mentioned on HN, Reddit, and more. Set up in 90 seconds.">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📡</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwindcss.config = {
       theme: {
         extend: {
+          fontFamily: {
+            mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+          },
           colors: {
-            brand: { 50: '#f0f9ff', 100: '#e0f2fe', 200: '#bae6fd', 300: '#7dd3fc', 400: '#38bdf8', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 800: '#075985', 900: '#0c4a6e' },
-            surface: { 50: '#f8fafc', 100: '#f1f5f9', 800: '#1e293b', 900: '#0f172a', 950: '#020617' }
+            sky: {
+              400: '#38bdf8',
+              500: '#0ea5e9',
+              600: '#0284c7',
+            }
           }
         }
       }
     }
   </script>
   <style>
-    .code-block { background: #0f172a; }
-    .gradient-text { background: linear-gradient(135deg, #0ea5e9, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    .fade-up { animation: fadeUp 0.6s ease-out forwards; }
-    .fade-up-delay { animation: fadeUp 0.6s ease-out 0.2s forwards; opacity: 0; }
+    :root {
+      --base: #020617;
+      --surface: #0f172a;
+      --surface-raised: #1e293b;
+      --border: #1e293b;
+      --border-subtle: #0f172a;
+      --text: #e2e8f0;
+      --text-muted: #64748b;
+      --text-dim: #94a3b8;
+      --accent: #0ea5e9;
+      --accent-dim: #0284c7;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      background: var(--base);
+      color: var(--text);
+      font-family: system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* Terminal block */
+    .terminal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+
+    .terminal-bar {
+      background: #1a2332;
+      border-bottom: 1px solid var(--border);
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-r { background: #ff5f57; }
+    .dot-y { background: #febc2e; }
+    .dot-g { background: #28c840; }
+
+    .terminal-label {
+      margin-left: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.03em;
+    }
+
+    .terminal pre {
+      margin: 0;
+      padding: 20px 20px 24px;
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    /* Syntax colors */
+    .t-comment { color: #475569; }
+    .t-cmd     { color: #38bdf8; }
+    .t-flag    { color: #94a3b8; }
+    .t-url     { color: #e2e8f0; }
+    .t-string  { color: #86efac; }
+    .t-key     { color: #7dd3fc; }
+    .t-val     { color: #fde68a; }
+    .t-punct   { color: #64748b; }
+    .t-prompt  { color: #475569; user-select: none; }
+
+    /* Inline code */
+    .inline-code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      background: rgba(14, 165, 233, 0.08);
+      padding: 1px 6px;
+      border-radius: 3px;
+    }
+
+    /* Divider */
+    .section-rule {
+      border: none;
+      border-top: 1px solid var(--border);
+    }
+
+    /* Steps */
+    .step-number {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--accent);
+      background: rgba(14, 165, 233, 0.1);
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      border: 1px solid rgba(14, 165, 233, 0.2);
+    }
+
+    /* Source pills */
+    .source-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 5px 12px;
+      font-size: 13px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-dim);
+      white-space: nowrap;
+    }
+
+    .source-pill.live {
+      color: var(--text);
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .status-live { background: #22c55e; box-shadow: 0 0 5px #22c55e80; }
+    .status-soon { background: #334155; }
+
+    .badge-live {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: #22c55e;
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.2);
+      padding: 1px 6px;
+      letter-spacing: 0.05em;
+    }
+
+    .badge-soon {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: #475569;
+      letter-spacing: 0.05em;
+    }
+
+    /* Trust row */
+    .trust-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    /* Pricing */
+    .plan-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 32px;
+    }
+
+    .plan-card.featured {
+      border-color: var(--accent);
+      border-width: 1px;
+      position: relative;
+    }
+
+    .featured-badge {
+      position: absolute;
+      top: -1px;
+      left: 32px;
+      background: var(--accent);
+      color: white;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 500;
+      padding: 3px 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .plan-price {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 36px;
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: -0.03em;
+    }
+
+    .plan-price span {
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+
+    .check-item::before {
+      content: '✓';
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    /* Buttons */
+    .btn-primary {
+      display: inline-block;
+      background: var(--accent);
+      color: white;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 10px 20px;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .btn-primary:hover { background: #38bdf8; }
+
+    .btn-secondary {
+      display: inline-block;
+      background: transparent;
+      color: var(--text-dim);
+      font-size: 14px;
+      font-weight: 400;
+      padding: 10px 20px;
+      border: 1px solid var(--border-subtle);
+      text-decoration: none;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-secondary:hover { border-color: #334155; color: var(--text); }
+
+    .btn-outline {
+      display: block;
+      width: 100%;
+      text-align: center;
+      background: transparent;
+      color: var(--text-dim);
+      font-size: 14px;
+      padding: 11px 20px;
+      border: 1px solid var(--border);
+      text-decoration: none;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-outline:hover { border-color: #334155; color: var(--text); }
+
+    .btn-accent {
+      display: block;
+      width: 100%;
+      text-align: center;
+      background: var(--accent);
+      color: white;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 11px 20px;
+      border: none;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .btn-accent:hover { background: #38bdf8; }
+
+    /* FAQ */
+    details {
+      border-bottom: 1px solid var(--border);
+    }
+
+    details summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 18px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 15px;
+      color: var(--text);
+      user-select: none;
+    }
+
+    details summary::-webkit-details-marker { display: none; }
+
+    .faq-icon {
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 18px;
+      line-height: 1;
+      transition: transform 0.2s;
+      flex-shrink: 0;
+      margin-left: 16px;
+    }
+
+    details[open] .faq-icon {
+      transform: rotate(45deg);
+    }
+
+    details .faq-body {
+      padding-bottom: 18px;
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.7;
+      max-width: 620px;
+    }
+
+    /* Nav */
+    nav a {
+      text-decoration: none;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in   { animation: fadeIn 0.5s ease-out both; }
+    .fade-in-2 { animation: fadeIn 0.5s ease-out 0.1s both; }
+    .fade-in-3 { animation: fadeIn 0.5s ease-out 0.2s both; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .trust-grid { grid-template-columns: 1fr; gap: 24px; }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .trust-label { font-size: 16px; }
+    }
   </style>
   <script defer data-domain="mentionwatch.com" src="https://plausible.io/js/script.js"></script>
 </head>
-<body class="bg-surface-950 text-gray-100 antialiased">
+<body>
 
-  <!-- Hero -->
-  <section class="min-h-screen flex items-center px-4 sm:px-6 lg:px-8 pt-8 pb-16">
-    <div class="max-w-7xl mx-auto w-full">
-      <nav class="flex justify-between items-center mb-16 sm:mb-24">
-        <div class="flex items-center gap-2 text-xl font-bold">
-          <span>📡</span> <span>MentionWatch</span>
-        </div>
-        <div class="flex items-center gap-6">
-          <a href="#pricing" class="text-sm text-gray-400 hover:text-white transition">Pricing</a>
-          <a href="/docs.html" class="text-sm text-gray-400 hover:text-white transition">Docs</a>
-          <a href="#pricing" class="text-sm bg-brand-600 hover:bg-brand-500 px-4 py-2 rounded-lg transition font-medium">Get Started</a>
-        </div>
+  <!-- ─── Nav ──────────────────────────────────────────────────────────── -->
+  <header style="border-bottom: 1px solid var(--border);">
+    <div style="max-width: 1100px; margin: 0 auto; padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between;">
+      <a href="/" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--text); font-size: 15px; font-weight: 500; letter-spacing: -0.01em;">
+        <span>📡</span> <span>MentionWatch</span>
+      </a>
+      <nav style="display: flex; align-items: center; gap: 24px;">
+        <a href="#pricing" style="font-size: 14px; color: var(--text-muted); transition: color 0.15s;" onmouseover="this.style.color='#e2e8f0'" onmouseout="this.style.color='#64748b'">Pricing</a>
+        <a href="/docs.html" style="font-size: 14px; color: var(--text-muted); transition: color 0.15s;" onmouseover="this.style.color='#e2e8f0'" onmouseout="this.style.color='#64748b'">Docs</a>
+        <a href="#pricing" class="btn-primary" style="font-size: 13px; padding: 7px 14px;">Get Started</a>
       </nav>
+    </div>
+  </header>
 
-      <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-        <div class="fade-up">
-          <p class="text-brand-400 font-medium mb-4 text-sm tracking-wide uppercase">Social Media Monitoring for Developers</p>
-          <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-            Know when anyone<br>
-            <span class="gradient-text">mentions your product</span>
-          </h1>
-          <p class="text-xl text-gray-400 mb-8 max-w-lg">
-            Set keywords via API. Get webhooks when they appear on Hacker News, Reddit, and more. No dashboards. No enterprise sales calls.
-          </p>
-          <div class="flex flex-col sm:flex-row gap-4">
-            <a href="#pricing" class="bg-brand-600 hover:bg-brand-500 text-white px-8 py-3 rounded-lg font-medium text-center transition text-lg">
-              Start free trial
-            </a>
-            <a href="/docs.html" class="border border-gray-700 hover:border-gray-500 text-gray-300 px-8 py-3 rounded-lg font-medium text-center transition text-lg">
-              Read the docs
-            </a>
-          </div>
+  <!-- ─── Hero ─────────────────────────────────────────────────────────── -->
+  <section style="max-width: 1100px; margin: 0 auto; padding: 72px 24px 80px;">
+    <div class="hero-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start;">
+
+      <!-- Left -->
+      <div class="fade-in">
+        <p style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px;">Developer API · Webhook delivery · $19/mo</p>
+        <h1 style="font-size: clamp(28px, 4vw, 44px); font-weight: 600; line-height: 1.15; letter-spacing: -0.03em; color: var(--text); margin-bottom: 20px;">
+          Know when anyone<br>mentions your product
+        </h1>
+        <p style="font-size: 16px; color: var(--text-muted); line-height: 1.65; margin-bottom: 32px; max-width: 400px;">
+          Set keywords via API. Get webhooks when they appear on Hacker News, Reddit, and more. No dashboards. No enterprise sales calls.
+        </p>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <a href="#pricing" class="btn-primary">Start free trial</a>
+          <a href="/docs.html" class="btn-secondary">Read the docs</a>
         </div>
-
-        <div class="fade-up-delay">
-          <div class="code-block rounded-xl p-6 border border-gray-800 shadow-2xl">
-            <div class="flex items-center gap-2 mb-4">
-              <div class="w-3 h-3 rounded-full bg-red-500"></div>
-              <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-              <div class="w-3 h-3 rounded-full bg-green-500"></div>
-              <span class="text-gray-500 text-xs ml-2">terminal</span>
-            </div>
-            <pre class="text-sm leading-relaxed overflow-x-auto"><code><span class="text-gray-500"># Add a keyword to monitor</span>
-<span class="text-brand-400">curl</span> -X POST https://api.mentionwatch.com/api/keywords \
-  -H <span class="text-green-400">"Authorization: Bearer mw_live_xxx"</span> \
-  -d <span class="text-yellow-300">'{"keyword": "my-product"}'</span>
-
-<span class="text-gray-500"># Set your webhook endpoint</span>
-<span class="text-brand-400">curl</span> -X POST https://api.mentionwatch.com/api/webhooks \
-  -H <span class="text-green-400">"Authorization: Bearer mw_live_xxx"</span> \
-  -d <span class="text-yellow-300">'{"url": "https://your-app.com/webhook"}'</span>
-
-<span class="text-gray-500"># That's it. You'll get POSTs like this:</span>
-{
-  <span class="text-brand-300">"keyword"</span>: <span class="text-yellow-300">"my-product"</span>,
-  <span class="text-brand-300">"source"</span>: <span class="text-yellow-300">"hackernews"</span>,
-  <span class="text-brand-300">"title"</span>: <span class="text-yellow-300">"Show HN: My Product - ..."</span>,
-  <span class="text-brand-300">"url"</span>: <span class="text-yellow-300">"https://news.ycombinator.com/..."</span>,
-  <span class="text-brand-300">"author"</span>: <span class="text-yellow-300">"pg"</span>,
-  <span class="text-brand-300">"timestamp"</span>: <span class="text-yellow-300">"2026-04-11T10:30:00Z"</span>
-}</code></pre>
-          </div>
-        </div>
+        <p style="margin-top: 16px; font-size: 13px; color: var(--text-muted);">7-day free trial. No credit card required.</p>
       </div>
+
+      <!-- Right: terminal -->
+      <div class="terminal fade-in-3">
+        <div class="terminal-bar">
+          <div class="dot dot-r"></div>
+          <div class="dot dot-y"></div>
+          <div class="dot dot-g"></div>
+          <span class="terminal-label">~ bash</span>
+        </div>
+        <pre><span class="t-comment"># Add a keyword</span>
+<span class="t-prompt">$</span> <span class="t-cmd">curl</span> <span class="t-flag">-X POST</span> <span class="t-url">https://api.mentionwatch.com/api/keywords</span> <span class="t-flag">\</span>
+    <span class="t-flag">-H</span> <span class="t-string">"Authorization: Bearer mw_live_xxx"</span> <span class="t-flag">\</span>
+    <span class="t-flag">-d</span> <span class="t-string">'{"keyword": "my-product"}'</span>
+
+<span class="t-comment"># You'll get webhooks like this:</span>
+<span class="t-punct">{</span>
+  <span class="t-key">"keyword"</span><span class="t-punct">:</span>   <span class="t-val">"my-product"</span><span class="t-punct">,</span>
+  <span class="t-key">"source"</span><span class="t-punct">:</span>    <span class="t-val">"hackernews"</span><span class="t-punct">,</span>
+  <span class="t-key">"title"</span><span class="t-punct">:</span>     <span class="t-val">"Show HN: My Product - ..."</span><span class="t-punct">,</span>
+  <span class="t-key">"url"</span><span class="t-punct">:</span>       <span class="t-val">"https://news.ycombinator.com/..."</span><span class="t-punct">,</span>
+  <span class="t-key">"author"</span><span class="t-punct">:</span>    <span class="t-val">"pg"</span><span class="t-punct">,</span>
+  <span class="t-key">"timestamp"</span><span class="t-punct">:</span> <span class="t-val">"2026-04-11T10:30:00Z"</span>
+<span class="t-punct">}</span></pre>
+      </div>
+
     </div>
   </section>
 
-  <!-- Webhook Payload Preview -->
-  <section class="px-4 sm:px-6 lg:px-8 py-16 bg-surface-900/50">
-    <div class="max-w-5xl mx-auto">
-      <h2 class="text-2xl sm:text-3xl font-bold text-center mb-4">What you get: a clean JSON webhook</h2>
-      <p class="text-gray-400 text-center mb-10 max-w-2xl mx-auto">
-        Every mention triggers a POST to your endpoint. Signed with HMAC-SHA256. Retried on failure.
-      </p>
-      <div class="code-block rounded-xl p-6 border border-gray-800 max-w-2xl mx-auto">
-        <div class="flex items-center justify-between mb-4">
-          <span class="text-xs text-gray-500 font-mono">POST https://your-app.com/webhook</span>
-          <span class="text-xs text-gray-600">X-MentionWatch-Signature: sha256=a1b2c3...</span>
+  <hr class="section-rule">
+
+  <!-- ─── How it works ─────────────────────────────────────────────────── -->
+  <section style="max-width: 1100px; margin: 0 auto; padding: 64px 24px;">
+    <h2 style="font-size: 13px; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 36px;">How it works</h2>
+    <div style="max-width: 600px; display: flex; flex-direction: column; gap: 0;">
+
+      <!-- Step 1 -->
+      <div style="display: flex; gap: 20px; padding: 24px 0; border-bottom: 1px solid var(--border);">
+        <div class="step-number">1</div>
+        <div>
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 6px; flex-wrap: wrap;">
+            <span style="font-weight: 500; color: var(--text); font-size: 15px;">Add keywords</span>
+            <code class="inline-code">POST /api/keywords</code>
+          </div>
+          <p style="font-size: 14px; color: var(--text-muted); margin: 0;">Tell us what to watch for.</p>
         </div>
-        <pre class="text-sm leading-relaxed overflow-x-auto"><code>{
-  <span class="text-brand-300">"id"</span>: <span class="text-yellow-300">"mw_evt_k8x92mf"</span>,
-  <span class="text-brand-300">"keyword"</span>: <span class="text-yellow-300">"my-product"</span>,
-  <span class="text-brand-300">"source"</span>: <span class="text-yellow-300">"hackernews"</span>,
-  <span class="text-brand-300">"type"</span>: <span class="text-yellow-300">"story"</span>,
-  <span class="text-brand-300">"title"</span>: <span class="text-yellow-300">"Show HN: My Product does X better"</span>,
-  <span class="text-brand-300">"text"</span>: <span class="text-yellow-300">"We built this because existing tools..."</span>,
-  <span class="text-brand-300">"author"</span>: <span class="text-yellow-300">"hackernewsuser"</span>,
-  <span class="text-brand-300">"url"</span>: <span class="text-yellow-300">"https://news.ycombinator.com/item?id=42345678"</span>,
-  <span class="text-brand-300">"source_url"</span>: <span class="text-yellow-300">"https://example.com/my-product"</span>,
-  <span class="text-brand-300">"timestamp"</span>: <span class="text-yellow-300">"2026-04-11T10:30:00Z"</span>,
-  <span class="text-brand-300">"delivered_at"</span>: <span class="text-yellow-300">"2026-04-11T10:35:12Z"</span>
-}</code></pre>
       </div>
+
+      <!-- Step 2 -->
+      <div style="display: flex; gap: 20px; padding: 24px 0; border-bottom: 1px solid var(--border);">
+        <div class="step-number">2</div>
+        <div>
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 6px; flex-wrap: wrap;">
+            <span style="font-weight: 500; color: var(--text); font-size: 15px;">Set your webhook</span>
+            <code class="inline-code">POST /api/webhooks</code>
+          </div>
+          <p style="font-size: 14px; color: var(--text-muted); margin: 0;">Point us at your endpoint. We sign every request.</p>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div style="display: flex; gap: 20px; padding: 24px 0;">
+        <div class="step-number">3</div>
+        <div>
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 6px; flex-wrap: wrap;">
+            <span style="font-weight: 500; color: var(--text); font-size: 15px;">Get mentions</span>
+            <code class="inline-code">→ POST your-app.com/hook</code>
+          </div>
+          <p style="font-size: 14px; color: var(--text-muted); margin: 0;">We poll the sources. You get a POST for every match.</p>
+        </div>
+      </div>
+
     </div>
   </section>
 
-  <!-- How It Works -->
-  <section class="px-4 sm:px-6 lg:px-8 py-20">
-    <div class="max-w-5xl mx-auto">
-      <h2 class="text-2xl sm:text-3xl font-bold mb-8">Three API calls. That's the setup.</h2>
-      <div class="space-y-6 max-w-2xl">
-        <div class="flex gap-4 items-start">
-          <span class="flex-none w-8 h-8 rounded bg-brand-600/20 text-brand-400 text-sm font-mono flex items-center justify-center">1</span>
-          <div>
-            <div class="font-medium mb-1">Add keywords <code class="text-xs text-gray-500 font-mono ml-2">POST /api/keywords</code></div>
-            <p class="text-gray-400 text-sm">Tell us what to watch for. Up to 25 keywords on Pro.</p>
-          </div>
-        </div>
-        <div class="flex gap-4 items-start">
-          <span class="flex-none w-8 h-8 rounded bg-brand-600/20 text-brand-400 text-sm font-mono flex items-center justify-center">2</span>
-          <div>
-            <div class="font-medium mb-1">Set your webhook <code class="text-xs text-gray-500 font-mono ml-2">POST /api/webhooks</code></div>
-            <p class="text-gray-400 text-sm">Point us at your endpoint. We sign every request.</p>
-          </div>
-        </div>
-        <div class="flex gap-4 items-start">
-          <span class="flex-none w-8 h-8 rounded bg-brand-600/20 text-brand-400 text-sm font-mono flex items-center justify-center">3</span>
-          <div>
-            <div class="font-medium mb-1">Get mentions <code class="text-xs text-gray-500 font-mono ml-2">→ POST your-app.com/hook</code></div>
-            <p class="text-gray-400 text-sm">We poll the sources. You get a POST for every match.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+  <hr class="section-rule">
 
-  <!-- Sources -->
-  <section class="px-4 sm:px-6 lg:px-8 py-16 bg-surface-900/50">
-    <div class="max-w-5xl mx-auto">
-      <h2 class="text-2xl sm:text-3xl font-bold mb-4">Sources we monitor</h2>
-      <p class="text-gray-400 mb-8 max-w-lg">Live sources deliver webhooks now. More coming based on what customers ask for.</p>
-      <div class="flex flex-wrap gap-3">
-        <span class="inline-flex items-center gap-2 bg-surface-900 border border-gray-800 px-4 py-2 rounded text-sm font-medium">
-          <span class="w-2 h-2 rounded-full bg-orange-500"></span> Hacker News
-          <span class="text-xs bg-green-900/50 text-green-400 px-1.5 py-0.5 rounded">live</span>
+  <!-- ─── Sources ──────────────────────────────────────────────────────── -->
+  <section style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+    <div style="max-width: 1100px; margin: 0 auto; padding: 48px 24px;">
+      <h2 style="font-size: 13px; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;">Sources we monitor</h2>
+      <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 24px;">Live sources deliver webhooks now. More coming based on demand.</p>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+
+        <span class="source-pill live">
+          <span class="status-dot status-live"></span>
+          Hacker News
+          <span class="badge-live">live</span>
         </span>
-        <span class="inline-flex items-center gap-2 bg-surface-900 border border-gray-800 px-4 py-2 rounded text-sm font-medium">
-          <span class="w-2 h-2 rounded-full bg-red-500"></span> Reddit
-          <span class="text-xs bg-green-900/50 text-green-400 px-1.5 py-0.5 rounded">live</span>
+
+        <span class="source-pill live">
+          <span class="status-dot status-live"></span>
+          Reddit
+          <span class="badge-live">live</span>
         </span>
-        <span class="inline-flex items-center gap-2 bg-surface-900 border border-gray-700/50 px-4 py-2 rounded text-sm text-gray-500">
-          <span class="w-2 h-2 rounded-full bg-gray-600"></span> Twitter / X
-          <span class="text-xs text-gray-600">soon</span>
+
+        <span class="source-pill">
+          <span class="status-dot status-soon"></span>
+          Twitter/X
+          <span class="badge-soon">soon</span>
         </span>
-        <span class="inline-flex items-center gap-2 bg-surface-900 border border-gray-700/50 px-4 py-2 rounded text-sm text-gray-500">
-          <span class="w-2 h-2 rounded-full bg-gray-600"></span> LinkedIn
-          <span class="text-xs text-gray-600">soon</span>
+
+        <span class="source-pill">
+          <span class="status-dot status-soon"></span>
+          LinkedIn
+          <span class="badge-soon">soon</span>
         </span>
-        <span class="inline-flex items-center gap-2 bg-surface-900 border border-gray-700/50 px-4 py-2 rounded text-sm text-gray-500">
-          <span class="w-2 h-2 rounded-full bg-gray-600"></span> Product Hunt
-          <span class="text-xs text-gray-600">soon</span>
+
+        <span class="source-pill">
+          <span class="status-dot status-soon"></span>
+          Product Hunt
+          <span class="badge-soon">soon</span>
         </span>
-        <span class="inline-flex items-center gap-2 bg-surface-900 border border-gray-700/50 px-4 py-2 rounded text-sm text-gray-500">
-          <span class="w-2 h-2 rounded-full bg-gray-600"></span> Dev.to
-          <span class="text-xs text-gray-600">soon</span>
+
+        <span class="source-pill">
+          <span class="status-dot status-soon"></span>
+          Dev.to
+          <span class="badge-soon">soon</span>
         </span>
-        <span class="inline-flex items-center gap-2 bg-surface-900 border border-gray-700/50 px-4 py-2 rounded text-sm text-gray-500">
-          <span class="w-2 h-2 rounded-full bg-gray-600"></span> GitHub
-          <span class="text-xs text-gray-600">soon</span>
+
+        <span class="source-pill">
+          <span class="status-dot status-soon"></span>
+          GitHub
+          <span class="badge-soon">soon</span>
         </span>
-        <a href="mailto:hello@mentionwatch.com" class="inline-flex items-center gap-2 border border-dashed border-gray-700 px-4 py-2 rounded text-sm text-gray-500 hover:text-gray-300 hover:border-gray-500 transition">
+
+        <a href="mailto:hello@mentionwatch.com" class="source-pill" style="border-style: dashed; text-decoration: none; transition: color 0.15s, border-color 0.15s;" onmouseover="this.style.color='#e2e8f0'; this.style.borderColor='#334155'" onmouseout="this.style.color='#64748b'; this.style.borderColor='#1e293b'">
           + Request a source
         </a>
+
       </div>
     </div>
   </section>
 
-  <!-- Trust Strip -->
-  <section class="px-4 sm:px-6 lg:px-8 py-16">
-    <div class="max-w-5xl mx-auto">
-      <div class="flex flex-wrap gap-x-12 gap-y-6">
-        <div>
-          <div class="text-2xl font-bold text-white font-mono mb-1">HMAC-SHA256</div>
-          <p class="text-gray-400 text-sm">Every webhook is signed.</p>
-        </div>
-        <div>
-          <div class="text-2xl font-bold text-white font-mono mb-1">3x retry</div>
-          <p class="text-gray-400 text-sm">Exponential backoff. 10s, 60s, 300s.</p>
-        </div>
-        <div>
-          <div class="text-2xl font-bold text-white font-mono mb-1">&lt;15 min</div>
-          <p class="text-gray-400 text-sm">Mention to webhook. Usually faster.</p>
-        </div>
+  <!-- ─── Trust metrics ────────────────────────────────────────────────── -->
+  <section style="max-width: 1100px; margin: 0 auto; padding: 56px 24px;">
+    <div class="trust-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; max-width: 720px;">
+
+      <div>
+        <div class="trust-label">HMAC-SHA256</div>
+        <p style="margin-top: 6px; font-size: 13px; color: var(--text-muted);">Every webhook is signed.</p>
       </div>
+
+      <div>
+        <div class="trust-label">3× retry</div>
+        <p style="margin-top: 6px; font-size: 13px; color: var(--text-muted);">Exponential backoff. 10s, 60s, 300s.</p>
+      </div>
+
+      <div>
+        <div class="trust-label">&lt;15 min</div>
+        <p style="margin-top: 6px; font-size: 13px; color: var(--text-muted);">Mention to webhook. Usually faster.</p>
+      </div>
+
     </div>
   </section>
 
-  <!-- Pricing -->
-  <section id="pricing" class="px-4 sm:px-6 lg:px-8 py-20 bg-surface-900/50">
-    <div class="max-w-4xl mx-auto">
-      <h2 class="text-2xl sm:text-3xl font-bold text-center mb-4">Simple pricing. No surprises.</h2>
-      <p class="text-gray-400 text-center mb-12">
-        Competitors charge $41-800/mo for dashboards you don't need. We charge for the API.
-      </p>
-      <div class="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+  <hr class="section-rule">
+
+  <!-- ─── Pricing ──────────────────────────────────────────────────────── -->
+  <section id="pricing" style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+    <div style="max-width: 1100px; margin: 0 auto; padding: 64px 24px;">
+
+      <div style="text-align: center; margin-bottom: 48px;">
+        <h2 style="font-size: 26px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 10px;">Simple pricing. No surprises.</h2>
+        <p style="font-size: 15px; color: var(--text-muted);">Competitors charge $41–800/mo for dashboards you don't need. We charge for the API.</p>
+      </div>
+
+      <div class="pricing-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 720px; margin: 0 auto;">
+
         <!-- Starter -->
-        <div class="bg-surface-950 border border-gray-800 rounded-xl p-8">
-          <h3 class="text-lg font-bold mb-1">Starter</h3>
-          <p class="text-gray-500 text-sm mb-4">For side projects and small products</p>
-          <div class="text-4xl font-bold mb-1">$19<span class="text-lg text-gray-500 font-normal">/mo</span></div>
-          <p class="text-gray-500 text-sm mb-6">7-day free trial</p>
-          <ul class="space-y-3 text-sm text-gray-300 mb-8">
-            <li class="flex items-center gap-2"><span class="text-brand-400">✓</span> 5 keywords</li>
-            <li class="flex items-center gap-2"><span class="text-brand-400">✓</span> 5,000 mentions/mo</li>
-            <li class="flex items-center gap-2"><span class="text-brand-400">✓</span> All live sources</li>
-            <li class="flex items-center gap-2"><span class="text-brand-400">✓</span> Webhook delivery</li>
-            <li class="flex items-center gap-2"><span class="text-brand-400">✓</span> HMAC signatures</li>
-            <li class="flex items-center gap-2"><span class="text-brand-400">✓</span> Email support</li>
-          </ul>
-          <a href="STRIPE_CHECKOUT_STARTER_URL" class="block w-full bg-gray-800 hover:bg-gray-700 text-white text-center py-3 rounded-lg font-medium transition">
-            Start free trial
-          </a>
+        <div class="plan-card">
+          <h3 style="font-size: 13px; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">Starter</h3>
+          <div class="plan-price">$19<span>/mo</span></div>
+          <p style="font-size: 12px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; margin-top: 4px; margin-bottom: 28px;">7-day free trial</p>
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px;">
+            <div class="check-item">5 keywords</div>
+            <div class="check-item">5,000 mentions/mo</div>
+            <div class="check-item">All live sources</div>
+            <div class="check-item">Webhook delivery</div>
+            <div class="check-item">HMAC signatures</div>
+            <div class="check-item">Email support</div>
+          </div>
+          <a href="STRIPE_CHECKOUT_STARTER_URL" class="btn-outline">Start free trial</a>
         </div>
+
         <!-- Pro -->
-        <div class="bg-surface-950 border-2 border-brand-600 rounded-xl p-8 relative">
-          <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand-600 text-white text-xs font-medium px-3 py-1 rounded-full">Most Popular</span>
-          <h3 class="text-lg font-bold mb-1">Pro</h3>
-          <p class="text-gray-500 text-sm mb-4">For growing products and teams</p>
-          <div class="text-4xl font-bold mb-1">$49<span class="text-lg text-gray-500 font-normal">/mo</span></div>
-          <p class="text-gray-500 text-sm mb-6">7-day free trial</p>
-          <ul class="space-y-3 text-sm text-gray-300 mb-8">
-            <li class="flex items-center gap-2"><span class="text-brand-400">✓</span> 25 keywords</li>
-            <li class="flex items-center gap-2"><span class="text-brand-400">✓</span> 50,000 mentions/mo</li>
-            <li class="flex items-center gap-2"><span class="text-brand-400">✓</span> All live sources</li>
-            <li class="flex items-center gap-2"><span class="text-brand-400">✓</span> Webhook delivery</li>
-            <li class="flex items-center gap-2"><span class="text-brand-400">✓</span> HMAC signatures</li>
-            <li class="flex items-center gap-2"><span class="text-brand-400">✓</span> Priority support</li>
-            <li class="flex items-center gap-2"><span class="text-brand-400">✓</span> Priority polling</li>
-          </ul>
-          <a href="STRIPE_CHECKOUT_PRO_URL" class="block w-full bg-brand-600 hover:bg-brand-500 text-white text-center py-3 rounded-lg font-medium transition">
-            Start free trial
-          </a>
+        <div class="plan-card featured">
+          <div class="featured-badge">Most popular</div>
+          <h3 style="font-size: 13px; font-family: 'JetBrains Mono', monospace; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px; margin-top: 8px;">Pro</h3>
+          <div class="plan-price">$49<span>/mo</span></div>
+          <p style="font-size: 12px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; margin-top: 4px; margin-bottom: 28px;">7-day free trial</p>
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px;">
+            <div class="check-item">25 keywords</div>
+            <div class="check-item">50,000 mentions/mo</div>
+            <div class="check-item">All live sources</div>
+            <div class="check-item">Webhook delivery</div>
+            <div class="check-item">HMAC signatures</div>
+            <div class="check-item">Priority support</div>
+            <div class="check-item">Priority polling</div>
+          </div>
+          <a href="STRIPE_CHECKOUT_PRO_URL" class="btn-accent">Start free trial</a>
         </div>
+
       </div>
-      <p class="text-center text-gray-500 text-sm mt-8">
-        Need more? <a href="mailto:hello@mentionwatch.com" class="text-brand-400 hover:underline">Talk to us about Enterprise</a>.
+
+      <p style="text-align: center; margin-top: 28px; font-size: 14px; color: var(--text-muted);">
+        Need more? <a href="mailto:hello@mentionwatch.com" style="color: var(--accent); text-decoration: none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Talk to us about Enterprise</a>.
       </p>
+
     </div>
   </section>
 
-  <!-- FAQ -->
-  <section class="px-4 sm:px-6 lg:px-8 py-20">
-    <div class="max-w-3xl mx-auto">
-      <h2 class="text-2xl sm:text-3xl font-bold text-center mb-12">FAQ</h2>
-      <div class="space-y-6">
-        <details class="group border border-gray-800 rounded-lg">
-          <summary class="flex justify-between items-center cursor-pointer p-5 text-gray-200 font-medium">
-            How fast are mentions delivered?
-            <span class="text-gray-500 group-open:rotate-45 transition-transform text-xl">+</span>
-          </summary>
-          <div class="px-5 pb-5 text-gray-400 text-sm">
-            We poll sources every 5-10 minutes. Most mentions are delivered within 15 minutes of appearing on the source. HN stories are typically fastest, Reddit slightly slower depending on subreddit activity.
-          </div>
-        </details>
-        <details class="group border border-gray-800 rounded-lg">
-          <summary class="flex justify-between items-center cursor-pointer p-5 text-gray-200 font-medium">
-            What happens if my webhook endpoint is down?
-            <span class="text-gray-500 group-open:rotate-45 transition-transform text-xl">+</span>
-          </summary>
-          <div class="px-5 pb-5 text-gray-400 text-sm">
-            We retry 3 times with exponential backoff (10 seconds, 60 seconds, 5 minutes). If all retries fail, the mention is stored and can be retrieved via the GET /api/mentions endpoint.
-          </div>
-        </details>
-        <details class="group border border-gray-800 rounded-lg">
-          <summary class="flex justify-between items-center cursor-pointer p-5 text-gray-200 font-medium">
-            How do I verify webhooks are from MentionWatch?
-            <span class="text-gray-500 group-open:rotate-45 transition-transform text-xl">+</span>
-          </summary>
-          <div class="px-5 pb-5 text-gray-400 text-sm">
-            Every webhook includes an <code class="bg-gray-800 px-1 rounded">X-MentionWatch-Signature</code> header with an HMAC-SHA256 signature. Your webhook secret is shown on your welcome page after signup. See the <a href="/docs.html#verification" class="text-brand-400 hover:underline">verification docs</a> for code examples.
-          </div>
-        </details>
-        <details class="group border border-gray-800 rounded-lg">
-          <summary class="flex justify-between items-center cursor-pointer p-5 text-gray-200 font-medium">
-            Which sources are currently live?
-            <span class="text-gray-500 group-open:rotate-45 transition-transform text-xl">+</span>
-          </summary>
-          <div class="px-5 pb-5 text-gray-400 text-sm">
-            Hacker News and Reddit are live now. Twitter/X, LinkedIn, Product Hunt, Dev.to, and GitHub Discussions are coming soon. We're adding sources based on customer demand — <a href="mailto:hello@mentionwatch.com" class="text-brand-400 hover:underline">let us know which you need</a>.
-          </div>
-        </details>
-        <details class="group border border-gray-800 rounded-lg">
-          <summary class="flex justify-between items-center cursor-pointer p-5 text-gray-200 font-medium">
-            Can I cancel anytime?
-            <span class="text-gray-500 group-open:rotate-45 transition-transform text-xl">+</span>
-          </summary>
-          <div class="px-5 pb-5 text-gray-400 text-sm">
-            Yes. Cancel anytime from your Stripe billing portal. No questions asked. Your subscription runs until the end of the billing period.
-          </div>
-        </details>
-        <details class="group border border-gray-800 rounded-lg">
-          <summary class="flex justify-between items-center cursor-pointer p-5 text-gray-200 font-medium">
-            Why is this so much cheaper than Mention.com or Brand24?
-            <span class="text-gray-500 group-open:rotate-45 transition-transform text-xl">+</span>
-          </summary>
-          <div class="px-5 pb-5 text-gray-400 text-sm">
-            We don't build dashboards, analytics suites, or enterprise features. We build an API. That means less code, less infrastructure, and we pass the savings to you. If you need a full analytics dashboard, those tools are great. If you just want the data via webhook, we're the better fit.
-          </div>
-        </details>
-      </div>
+  <!-- ─── FAQ ──────────────────────────────────────────────────────────── -->
+  <section style="max-width: 1100px; margin: 0 auto; padding: 64px 24px;">
+    <h2 style="font-size: 13px; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 32px;">FAQ</h2>
+    <div style="max-width: 680px;">
+
+      <details>
+        <summary>
+          How fast are mentions delivered?
+          <span class="faq-icon">+</span>
+        </summary>
+        <div class="faq-body">
+          We poll sources every 5–10 minutes. Most mentions arrive within 15 minutes.
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          What happens if my webhook endpoint is down?
+          <span class="faq-icon">+</span>
+        </summary>
+        <div class="faq-body">
+          We retry 3 times with exponential backoff (10s, 60s, 5 min). Failed deliveries are stored and retrievable via <code class="inline-code">GET /api/mentions</code>.
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          How do I verify webhooks are from MentionWatch?
+          <span class="faq-icon">+</span>
+        </summary>
+        <div class="faq-body">
+          Every webhook includes an <code class="inline-code">X-MentionWatch-Signature</code> header with HMAC-SHA256. See the <a href="/docs.html#verification" style="color: var(--accent);">verification docs</a> for Node.js and Python examples.
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          Which sources are live?
+          <span class="faq-icon">+</span>
+        </summary>
+        <div class="faq-body">
+          Hacker News and Reddit. More coming based on customer demand.
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          Can I cancel anytime?
+          <span class="faq-icon">+</span>
+        </summary>
+        <div class="faq-body">
+          Yes. Cancel anytime from your Stripe billing portal.
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          Why is this cheaper than Mention.com?
+          <span class="faq-icon">+</span>
+        </summary>
+        <div class="faq-body">
+          We build an API, not dashboards. Less code, less infrastructure, lower price.
+        </div>
+      </details>
+
     </div>
   </section>
 
-  <!-- CTA -->
-  <section class="px-4 sm:px-6 lg:px-8 py-20 bg-surface-900/50">
-    <div class="max-w-2xl mx-auto text-center">
-      <h2 class="text-3xl sm:text-4xl font-bold mb-4">Start monitoring in 90 seconds</h2>
-      <p class="text-gray-400 mb-8 text-lg">Sign up, get your API key, send a test webhook. That's the whole setup.</p>
-      <a href="#pricing" class="inline-block bg-brand-600 hover:bg-brand-500 text-white px-10 py-4 rounded-lg font-medium transition text-lg">
-        Start free trial
-      </a>
-      <p class="text-gray-600 text-sm mt-4">7-day free trial. No credit card required.</p>
-    </div>
+  <hr class="section-rule">
+
+  <!-- ─── CTA ──────────────────────────────────────────────────────────── -->
+  <section style="max-width: 1100px; margin: 0 auto; padding: 72px 24px;">
+    <h2 style="font-size: clamp(24px, 3.5vw, 36px); font-weight: 600; letter-spacing: -0.03em; margin-bottom: 12px;">Start monitoring in 90 seconds</h2>
+    <p style="font-size: 16px; color: var(--text-muted); margin-bottom: 28px; max-width: 440px; line-height: 1.6;">Sign up, get your API key, send a test webhook. That's the whole setup.</p>
+    <a href="#pricing" class="btn-primary" style="font-size: 15px; padding: 12px 24px;">Start free trial</a>
+    <p style="margin-top: 14px; font-size: 13px; color: var(--text-muted);">7-day free trial. No credit card required.</p>
   </section>
 
-  <!-- Footer -->
-  <footer class="px-4 sm:px-6 lg:px-8 py-12 border-t border-gray-800">
-    <div class="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-6">
-      <div class="flex items-center gap-2 text-gray-400">
-        <span>📡</span> <span class="font-medium">MentionWatch</span>
-      </div>
-      <div class="flex gap-6 text-sm text-gray-500">
-        <a href="/docs.html" class="hover:text-gray-300 transition">API Docs</a>
-        <a href="mailto:hello@mentionwatch.com" class="hover:text-gray-300 transition">Contact</a>
-        <a href="https://twitter.com/mentionwatch" class="hover:text-gray-300 transition">Twitter</a>
+  <!-- ─── Footer ───────────────────────────────────────────────────────── -->
+  <footer style="border-top: 1px solid var(--border);">
+    <div style="max-width: 1100px; margin: 0 auto; padding: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+      <span style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text-muted); font-weight: 500;">
+        <span>📡</span> MentionWatch
+      </span>
+      <div style="display: flex; gap: 20px;">
+        <a href="/docs.html" style="font-size: 13px; color: var(--text-muted); text-decoration: none; transition: color 0.15s;" onmouseover="this.style.color='#e2e8f0'" onmouseout="this.style.color='#64748b'">API Docs</a>
+        <a href="mailto:hello@mentionwatch.com" style="font-size: 13px; color: var(--text-muted); text-decoration: none; transition: color 0.15s;" onmouseover="this.style.color='#e2e8f0'" onmouseout="this.style.color='#64748b'">Contact</a>
+        <a href="https://twitter.com/mentionwatch" style="font-size: 13px; color: var(--text-muted); text-decoration: none; transition: color 0.15s;" onmouseover="this.style.color='#e2e8f0'" onmouseout="this.style.color='#64748b'">Twitter</a>
       </div>
     </div>
   </footer>
